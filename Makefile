@@ -10,12 +10,12 @@ SRCS = \
 	src/main.cpp
 
 RDEFS = resources/haichi.rdef
-LIBS = be
+LIBS = be $(STDCPPLIBS)
 SYSTEM_INCLUDE_PATHS =
 LOCAL_INCLUDE_PATHS = src
 OPTIMIZE := FULL
 WARNINGS = ALL
-COMPILER_FLAGS = -std=c++11
+COMPILER_FLAGS =
 
 DEVEL_DIRECTORY := \
 	$(shell findpaths -r "makefile_engine" B_FIND_PATH_DEVELOP_DIRECTORY)

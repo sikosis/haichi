@@ -5,11 +5,11 @@ SRCS = \
 	LayoutMathTest.cpp \
 	../src/PositionScaling.cpp
 
-LIBS = be
+LIBS = be $(STDCPPLIBS)
 LOCAL_INCLUDE_PATHS = ../src
 OPTIMIZE := FULL
 WARNINGS = ALL
-COMPILER_FLAGS = -std=c++11
+COMPILER_FLAGS =
 
 DEVEL_DIRECTORY := \
 	$(shell findpaths -r "makefile_engine" B_FIND_PATH_DEVELOP_DIRECTORY)

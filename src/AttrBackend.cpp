@@ -12,8 +12,6 @@
 #include <Path.h>
 
 #include <algorithm>
-#include <cstring>
-
 namespace Haichi {
 
 namespace {
@@ -184,13 +182,7 @@ status_t AttrBackend::SetLocation(const entry_ref& ref, BPoint location) {
 	if (result != B_OK)
 		return result;
 
-	PoseInfo poseInfo;
-	std::memset(&poseInfo, 0, sizeof(poseInfo));
-	ssize_t bytesRead = node.ReadAttr(kPoseInfoAttribute, B_RAW_TYPE, 0,
-		&poseInfo, sizeof(poseInfo));
-	if (bytesRead != (ssize_t)sizeof(poseInfo))
-		std::memset(&poseInfo, 0, sizeof(poseInfo));
-
+	PoseInfo poseInfo = {};
 	poseInfo.invisible = false;
 	poseInfo.initialisedDirectory = ref.directory;
 	poseInfo.location = location;

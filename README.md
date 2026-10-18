@@ -57,4 +57,4 @@ volume and Trash poses are intentionally outside the Phase 1 scope.
 - Phase 2 onward: Deskbar replicant, graphical window, undo UI, and layout
   management UI remain to be implemented.
 
-Version: v0.01
+Version: v0.02
