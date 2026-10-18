@@ -1,0 +1,2844 @@
+v
+Table of Contents
+Preface ................................................................................................................... vii
+1. BeOS Programming Overview ............................................................. 1
+Features of the BeOS ....................................................................................... 1
+Structure of the BeOS ...................................................................................... 5
+Software Kits and Their Classes ...................................................................... 7
+BeOS Programming Fundamentals ............................................................... 13
+BeOS Programming Environment ................................................................. 28
+2. BeIDE Projects .......................................................................................... 31
+Development Environment File Organization .............................................. 31
+Examining an Existing BeIDE Project ........................................................... 34
+Setting up a New BeIDE Project ................................................................... 47
+HelloWorld Source Code ............................................................................... 65
+3. BeOS API Overview ................................................................................ 75
+Overview of the BeOS Software Kits ............................................................ 75
+Software Kit Class Descriptions ..................................................................... 80
+Chapter Example: Adding an Alert to MyHelloWorld .................................. 89
+4. Windows, Views, and Messages ......................................................... 98
+Windows ......................................................................................................... 98
+Views ............................................................................................................ 110
+Messaging ..................................................................................................... 126
+
+vi Table of Contents
+5. Drawing ................................................................................................... 134
+Colors ............................................................................................................ 135
+Patterns ......................................................................................................... 150
+The Drawing Pen ......................................................................................... 155
+Shapes ........................................................................................................... 159
+6. Controls and Messages ....................................................................... 177
+Introduction to Controls .............................................................................. 177
+Buttons .......................................................................................................... 189
+Picture Buttons ............................................................................................. 193
+Checkboxes .................................................................................................. 198
+Radio Buttons ............................................................................................... 204
+Text Fields .................................................................................................... 214
+Multiple Control Example Project ............................................................... 220
+7. Menus ........................................................................................................ 226
+Menu Basics ................................................................................................. 226
+Working With Menus ................................................................................... 244
+Multiple Menus ............................................................................................. 258
+Pop-up Menus .............................................................................................. 262
+Submenus ..................................................................................................... 268
+8. Text ............................................................................................................. 272
+Fonts ............................................................................................................. 273
+Simple Text ................................................................................................... 282
+Editable Text ................................................................................................ 286
+Scrolling ........................................................................................................ 305
+9. Messages and Threads ........................................................................ 322
+The Application Kit and Messages .............................................................. 323
+Application-Defined Messages .................................................................... 330
+10. Files ............................................................................................................ 359
+Files and the Storage Kit .............................................................................. 359
+Using Standard Open and Save Panels ....................................................... 361
+Onward ......................................................................................................... 375
+Index .................................................................................................................... 377
+
+1
+Chapter 1
+In this chapter:
+• Features of the BeOS
+• Structure of the BeOS
+• Software Kits and
+Their Classes
+• BeOS Programming
+Fundamentals
+• BeOS Programming
+Environment
+1
+1. BeOS Programming
+Overview
+A few years back, the Macintosh operating system was considered innovative and
+fun. Now many view it as dated and badly in need of a rewrite rather than a sim-
+ple upgrade. Windows 95 is the most popular operating system in the world—but
+this operating system is in many ways a copy of the Mac OS, less the Mac’s charac-
+ter. Many programmers and computer enthusiasts enjoy the command-line inter-
+face power of Unix—but Unix isn’t nearly intuitive enough for the average end
+user. What users really want is an operating system that has an easy-to-use graphi-
+cal user interface, takes advantage of the power of today’s fast microprocessor
+chips, and is unencumbered with the burdens of backward compatibility. Enter Be,
+Inc., and the BeOS—the Be operating system.
+In this introductory chapter, you’ll learn about the features of the BeOS from a
+programmer’s perspective. In particular, you’ll read about the terminology relating
+to the Be operating system. You’ll also get an overview of the layout of the appli-
+cation programming interface, or API, that you’ll be using to aid you in piecing
+together your programs. After the overview, you’ll look at some of the fundamen-
+tals of writing applications for the BeOS. No attempt will be made to supply you
+with a full understanding of the concepts, techniques, and tricks of programming
+for this operating system—you’ve got the whole rest of the book for that! Instead,
+in this chapter I’ll just give you a feel for what it’s like to write a program for the
+BeOS. Finally, this chapter concludes with a first look at Metrowerks CodeWar-
+rior—the integrated development environment you’ll be using to develop your
+own applications that run on the BeOS.
+Features of the BeOS
+With any new technology comes a plethora of buzzwords. This marketing hype is
+especially true in the computer industry—innovative software and hardware seem
+
+2 Chapter 1: BeOS Programming Overview
+to appear almost daily, and each company needs some way to ensure that the
+public views their product as the best. Unsurprisingly, the BeOS is also accompa-
+nied by a number of buzzwords—multithreaded, multiprocessor support, and
+preemptive multitasking being a few. What may be surprising is that this nomen-
+clature, when applied to BeOS, isn’t just hype—these phrases really do define this
+exciting operating system!
+Multithreaded
+A thread is a path of execution—a part of a program that acts independently from
+other parts of the program, yet is still capable of sharing data with the rest of pro-
+gram. An OS that is multithreaded allows a single program to be divided into sev-
+eral threads, with each thread carrying out its own task. The processor devotes a
+small amount of time first to one thread and then to another, repeating this cycle
+for as long as it takes to carry out whatever task each thread is to perform. This
+parallel processing allows the end user to carry out one action while another is
+taking place. Multithreading doesn’t come without a price—though fortunately in
+the BeOS this price is a rather small one. A program that creates multiple threads
+needs to be able to protect its data against simultaneous access from different
+threads. The technique of locking information when it is being accessed is one
+that is relatively easy to implement in BeOS programs.
+The BeOS is a multithreaded operating system—and a very efficient one. While
+programmers can explicitly create threads, much of the work of handling threads
+is taken care of behind the scenes by the operating system itself. For instance,
+when a window is created in a program, the BeOS creates and maintains a sepa-
+rate thread for that one window.
+Multiprocessor Support
+An operating system that uses multithreading, designed so that threads can be sent
+to different processors, is said to use symmetric multiprocessing, or SMP. On an
+SMP system, unrelated threads can be sent to different processors. For instance, a
+program could send a thread that is to carry out a complex calculation to one pro-
+cessor and, at the same time, send a thread that is to be used to transfer a file over
+a network to a second processor. Contrasting with symmetric multiprocessing
+(SMP) is asymmetric multiprocessing, or AMP. A system that uses AMP sends a
+thread to one processor (deemed the master processor) which in turn parcels out
+subtasks to the other processor or processors (called the slave processor or pro-
+cessors).
+The BeOS can run on single-processor systems (such as single-processor Power
+Macintosh computers), but it is designed to take full advantage of machines that
+
+Features of the BeOS 3
+have more than one processor—it uses symmetric multiprocessing. When a Be
+program runs on a multiprocessor machine, the program can send threads to each
+processor for true parallel processing. Best of all, the programmer doesn’t need to
+be concerned about how to evenly divide the work load. The Be operating sys-
+tem is responsible for distributing tasks among whatever number of processors are
+on the host machine—whether that be one, two, four, or more CPUs.
+The capability to run different threads on different processors, coupled with the
+system’s ability to assign threads to processors based on the current load on each
+processor, makes for a system with very high performance.
+Preemptive Multitasking
+An operating system that utilizes multitasking is one that allows more than one
+program to run simultaneously. If that operating system has cooperative multitask-
+ing, it’s up to each running program to yield control of system resources to allow
+the other running applications to perform their chores. In other words, programs
+must cooperate. In a cooperative multitasking environment, programs can be
+written such that they don’t cooperate graciously—or even such that they don’t
+cooperate at all. A better method of implementing multitasking is for an operating
+system to employ preemptive multitasking. In a preemptive multitasking environ-
+ment the operating system can, and does, preempt currently running applications.
+With preemptive multitasking, the burden of passing control from one program to
+another falls on the operating system rather than on running applications. The
+advantage is that no one program can grab and retain control of system resources.
+If you haven’t already guessed, the BeOS has preemptive multitasking. The BeOS
+microkernel (a low-level task manager discussed later in this chapter) is responsi-
+ble for scheduling tasks according to priority levels. All tasks are allowed use of a
+processor for only a very short time—three-thousandths of a second. If a program
+doesn’t completely execute a task in one such time-slice, it will pick up where it
+left off the next time it regains use of a processor.
+Protected Memory
+When a program launches, the operating system reserves an area of RAM and
+loads a copy of that program’s code into this memory. This area of memory is then
+devoted to this application—and to this application only. While a program run-
+ning under any operating system doesn’t intentionally write to memory locations
+reserved for use by other applications, it can inadvertently happen (typically when
+the offending program encounters a bug in its code). When a program writes out-
+side of its own address space, it may result in incorrect results or an aborted pro-
+gram. Worse still, it could result in the entire system crashing.
+
+4 Chapter 1: BeOS Programming Overview
+An operating system with protected memory gives each running program its own
+memory space that can’t be accessed by other programs. The advantage to mem-
+ory protection should be obvious: while a bug in a program may crash that pro-
+gram, the entire system won’t freeze and a reboot won’t be necessary. The BeOS
+has protected memory. Should a program attempt to access memory outside its
+own well-defined area, the BeOS will terminate the rogue program while leaving
+any other running applications unaffected. To the delight of users, their machines
+running BeOS rarely crash.
+Virtual Memory
+To accommodate the simultaneous running of several applications, some operat-
+ing systems use a memory scheme called virtual memory. Virtual memory is
+memory other than RAM that is devoted to holding application code and data.
+Typically, a system reserves hard drive space and uses that area as virtual mem-
+ory. As a program executes, the processor shuffles application code and data
+between RAM and virtual memory. In effect, the storage space on the storage
+device is used as an extension of RAM.
+The BeOS uses virtual memory to provide each executing application with the
+required memory. For any running application, the system first uses RAM to han-
+dle the program’s needs. If there is a shortage of available physical memory, the
+system then resorts to hard drive space as needed.
+Less Hindered by Backward Compatibility
+When a company such as Apple or Microsoft sets about to upgrade its operating
+system, it must take into account the millions of users that have a large invest-
+ment in software designed to run on the existing version of its operating system.
+So no matter how radical the changes and improvements are to a new version of
+an operating system, the new OS typically accommodates these users by supply-
+ing backward compatibility.
+Backward compatibility—the ability to run older applications as well as programs
+written specifically for the new version of the OS—helps keep the installed base of
+users happy. But backward compatibility has a downside: it keeps an upgrade to
+an operating system from reaching its true potential. In order to keep programs
+that were written for old technologies running, the new OS cannot include some
+new technologies that would “break” these existing applications. As a new operat-
+ing system, the BeOS had no old applications to consider. It was designed to take
+full advantage of today’s fast hardware and to incorporate all the available mod-
+ern programming techniques. As subsequent releases of the BeOS are made avail-
+able, backward compatibility does become an issue. But it will be quite a while
+
+Structure of the BeOS 5
+before original applications need major overhauling (as is the case for, say, a Mac-
+intosh application written for an early version of the Mac OS).
+Structure of the BeOS
+Be applications run on hardware driven by either Intel or PowerPC microproces-
+sors (check the BeOS Support Guides page at http://www.be.com/support/guides/
+for links to lists of exactly which Intel and PowerPC machines are currently sup-
+ported). Between the hardware and applications lies the BeOS software. As shown
+in Figure 1-1, the operating system software consists of three layers: a microkernel
+layer that communicates with the computer’s hardware, a server layer consisting of
+a number of servers that each handle the low-level work of common tasks (such
+as printing), and a software kit layer that holds several software kits—shared
+libraries (known as dynamically linked libraries, or DLLs, to some programmers)
+that act as a programmer’s interface to the servers and microkernel.
+Microkernel
+The bottom layer consists of the microkernel. The microkernel works directly with
+the hardware of the host machine, as well as with device drivers. The code that
+makes up the microkernel handles low-level tasks critical to the control of the
+computer. For instance, the microkernel manages access to memory. The kernel
+also provides the building blocks that other programs use: thread scheduling, the
+file system tools, and memory-locking primitives.
+Servers
+Above the microkernel lies the server layer. This layer is composed of a number of
+servers—processes that run in the background and carry out tasks for applications
+that are currently executing. For example, the purpose of the Input Server is
+Figure 1-1. The layers of the BeOS reside between applications and hardware
+Application
+Software Kits
+Server
+Microkernel
+Hardware
+
+6 Chapter 1: BeOS Programming Overview
+to handle access to all the various keyboards, mice, joysticks, and other input
+devices that may be connected to a machine running the BeOS. Another server
+is the Application Server, a very important server that handles the display of
+graphics and application communication. As a programmer you won’t work
+directly with servers; instead, you’ll rely on software kits to access the power of
+the server software.
+Kits
+Above the server layer is the software kit layer. A kit consists of a number of
+object-oriented classes that a programmer makes use of when writing a BeOS pro-
+gram. Collectively the classes in the software kits comprise the BeOS API. You
+know that the abbreviation API stands for application programming interface. But
+what does the application interface to? Other software. For Be applications, the
+kits are the interface to the various servers. For instance, the Application Kit holds
+several classes used by programmers in your position who are trying to create
+tools for users. The programmer writes code that invokes methods that are a part
+of the classes of the Application Kit, and the Application Kit then communicates
+with the Application Server to perform the specified task. A couple of the other
+servers you’ll encounter in your Be programming endeavors are the Print Server
+and the Media Server.
+Some kits don’t rely on servers to carry out microkernel-related operations—the
+chores they take care of may be simple and straightforward enough that they don’t
+need their own server software. Instead, these kits directly invoke microkernel
+code. As you can see in Figure 1-1, an application relies directly on the software
+kits and indirectly on the servers and microkernel.
+As you become more proficient at BeOS programming, you’ll also become more
+intimate with the classes that comprise the various software kits. Now that you
+know this, you’ll realize that it is no accident that the majority of this book is
+devoted to understanding the purpose of, and working with, the various BeOS
+kits.
+This book is tutorial in nature. Its purpose is to get you acquainted
+with the process of developing applications that run on the BeOS
+and to provide an overview of the BeOS API. Its purpose isn’t to
+document the dozens of classes and hundreds of member functions
+that make up the BeOS API. After—or while—reading this book, you
+may want such a reference. If you do, consider the books Be Devel-
+oper’s Guide and Be Advanced Topics, also by O’Reilly & Associates.
+
+Software Kits and Their Classes 7
+Software Kits and Their Classes
+The application programming interface of the BeOS is object-oriented—the code
+that makes up the software kits is written in C++. If you have experience program-
+ming in C++ on any platform, you’re already at the midpoint in your journey to
+becoming adept at BeOS programming. Now you just need to become proficient
+in the layout and use of the classes that make up the software kits.
+Software Kit Overview
+The BeOS consists of about a dozen software kits—the number is growing as the
+BeOS is enhanced. Don’t panic, though—you won’t be responsible for knowing
+about all the classes in all of the kits. Very simple applications require only the
+classes from a very few of the kits. For instance, an application that simply dis-
+plays a window that holds text uses the Application Kit and the Interface Kit. A
+more complex application requires more classes from more kits. Presentation soft-
+ware that stores sound and video data in files, for example, might require the use
+of classes from the Storage Kit, the Media Kit, and the Network Kit—as well as
+classes from the two previously mentioned kits. While it’s unlikely that you’ll ever
+write a program that uses all of the BeOS kits, it’s a good idea to at least have an
+idea of the purpose of each.
+The kits of the BeOS are subject to change. As the BeOS matures,
+new functionality will be added. This functionality will be supported
+by new classes in existing kits and, perhaps, entirely new software
+kits.
+Application Kit
+The Application Kit is a small but vitally important kit. Because every applica-
+tion is based on a class derived from the BApplicationclass that is defined
+in this kit, every application uses the Application Kit.
+The Application Kit defines a messaging system (described later in this chap-
+ter) that makes applications aware of events (such as a click of a mouse but-
+ton by the user). This kit also give applications the power to communicate
+with one another.
+Interface Kit
+The Interface Kit is by far the largest of the software kits. The classes of this
+kit exist to supply applications with a graphical user interface that fully sup-
+ports user interaction. The definition of windows and the elements that are
+contained in windows (such as scrollbars, buttons, lists, and text) are handled
+
+8 Chapter 1: BeOS Programming Overview
+by classes in this kit. Any program that opens at least one window uses the
+Interface Kit.
+Storage Kit
+The Storage Kit holds the classes that store and update data on disks. Pro-
+grams that work with files will work with the Storage Kit.
+Support Kit
+As its name suggests, the contents of the Support Kit support the other kits.
+Here you’ll find the definitions of datatypes, constants, and a few classes.
+Because the Support Kit defines many of the basic elements of the BeOS (such
+as the Boolean constants true and false), all applications use this kit.
+Media Kit
+The Media Kit is responsible for the handling of real-time data. In particular,
+this kit defines classes that are used to process audio and video data.
+Midi Kit
+The Midi Kit is used for applications that process MIDI (Musical Instrument
+Digital Interface) data.
+Kernel Kit
+The Kernel Kit is used by applications that require low-level access to the
+BeOS microkernel. This kit defines classes that allow programmers to explic-
+itly create and maintain threads.
+Device Kit
+The Device Kit provides interfaces to hardware connectors (such as the serial
+port), and is necessary only for programmers who are developing drivers.
+Network Kit
+The Network Kit exists to provide TCP/IP services to applications.
+OpenGL Kit
+The OpenGL Kit provides classes that allow programmers to add 3D capabili-
+ties to their programs. The classes aid in the creation and manipulation of
+three-dimensional objects.
+Translation Kit
+The Translation Kit is useful when a program needs to convert data from one
+media format to another. For instance, a program that can import an image of
+one format (such as a JPEG image) but needs to convert that image to another
+format might make use of this kit.
+Mail Kit
+The Mail Kit assists in adding Internet email services (such as sending mes-
+sages using Simple Mail Transfer Protocol (SMTP) to an application).
+
+Software Kits and Their Classes 9
+Game Kit
+The Game Kit—which is under development as of this writing—consists of
+two major classes that support game developers.
+BeOS Naming Conventions
+Some of the many classes that make up the BeOS are discussed a little later. As
+they’re introduced, you’ll notice that each starts with an uppercase letter “B,” as in
+BMessage, BApplication, and BControl. This is no accident, of course—the
+software of the kits follows a naming convention.
+The BeOS software kits consist of classes (which contain member functions and
+data members), constants, and global variables. The BeOS imposes a naming con-
+vention on each of these types of elements so that anyone reading your code can
+readily distinguish between code that is defined by the BeOS and code that is
+defined by your own program. Table 1-1 lists these conventions.
+Classes of the BeOS always begin with an uppercase “B” (short for “BeOS”, of
+course). Following the “B” prefix, the first letter of each word in the class name
+appears in uppercase, while the remainder of the class name appears in
+lowercase. Examples of class names are BButton, BTextView, BList, and
+BScrollBar.
+Member functions that are defined by BeOS classes have the first letter of each
+word in uppercase and the remainder of the function name in lowercase. Exam-
+ples of BeOS class member function names are GetFontInfo(), KeyDown(),
+Frame(), and Highlight().
+Data members that are defined by BeOS classes have the first letter of each word
+in uppercase and the remainder of the data member name in lowercase, with the
+exception of the first word—it always begins in lowercase. Examples of BeOS
+class data member names are rotation and what.
+Table 1-1. BeOS Naming Conventions
+Category Preﬁx Spelling Example
+Class name B Begin words with uppercase letter BRect
+Member function none Begin words with uppercase letter OffsetBy()
+Data member none Begin words (excepting the first) with
+uppercase letter
+bottom
+Constant B_ All uppercase B_LONG_TYPE
+Global variable be_ All lowercase be_clipboard
+
+10 Chapter 1: BeOS Programming Overview
+I’ve included only a couple of examples of data member names
+because I had a hard time finding any! Be engineers went to great
+lengths to hide data members. If you peruse the Be header files
+you’ll find a number of data members—but most are declared pri-
+vate and are used by the classes themselves rather than by you, the
+programmer. You’ll typically make things happen in your code by
+invoking member functions (which themselves may access or alter
+private data members) rather than by working directly with any data
+members.
+Constants defined by BeOS always begin with an uppercase “B” followed by an
+underscore. The remainder of the constant’s name is in uppercase, with an under-
+score between words. Examples include: B_WIDTH_FROM_LABEL, B_WARNING_
+ALERT, B_CONTROL_ON, and B_BORDER_FRAME.
+The BeOS software includes some global variables. Such a variable begins with the
+prefix “be_” and is followed by a lowercase name, as in: be_app, be_roster, and
+be_clipboard.
+Software Kit Inheritance Hierarchies
+The relationships between classes of a software kit can be shown in the inherit-
+ance hierarchy for that kit. Figure 1-2 shows such an inheritance hierarchy for the
+largest kit, the Interface Kit.
+The kits that make up the BeOS don’t exist in isolation from one
+another. A class from one kit may be derived from a class defined in
+a different kit. The BWindowclass is one such example. Kits serve as
+logical groupings of BeOS classes—they make it easier to categorize
+classes and conceptualize class relationships.
+Figure 1-2 shows that the object-oriented concept of inheritance—the ability of
+one class to inherit the functionality of another class or classes—plays a very large
+role in the BeOS. So too does multiple inheritance—the ability of a class to inherit
+from multiple classes. In the figure, you see that almost all of the Interface Kit
+classes are derived from other classes, and that many of the classes inherit the con-
+tents of several classes. As one example, consider the six control classes pictured
+together in a column at the far right of Figure 1-2. An object of any of these classes
+(such as a BButtonobject) consists of the member functions defined in that class
+as well as the member functions defined by all of the classes from which it is
+directly and indirectly derived: the BControl, BInvoker, BView, BHandler, and
+
+Software Kits and Their Classes 11
+BArchivableclasses. Figure 1-3 isolates the discussed classes for emphasis of this
+point. This figure shows that in inheritance hierarchy figures in this book, a class
+pictured to the left of another class is higher up in the hierarchy. In Figure 1-3,
+BView is derived from BHandler, BControl is derived from BView, and so forth.
+Figure 1-2. The inheritance hierarchy for the Interface Kit
+Application Kit
+Other Be Kit
+BRoster
+BRoster
+BObjects
+Support Kit
+BRegion
+BPolygon
+Application Kit Application Kit
+BHandler BLooper BWindow BAlert
+BView BTextView
+BStringView
+BBox
+BControl BTextControl
+BColorControl
+BCheckBox
+BRadioButton
+BPictureButton
+BButton
+BPopUpMenu
+BMenuBar
+BScrollBar
+BScrollView
+BListView
+BMenu
+BMenu
+BPrintJob
+BPicture
+BBitmap
+BMenuItem BSeparationItem
+
+12 Chapter 1: BeOS Programming Overview
+Understanding the class hierarchies of the BeOS enables you to
+quickly determine which class or classes (and thus which member
+functions) you will need to use to implement whatever behavior
+you’re adding to your program. Obviously, knowledge of the class
+hierarchies is important. Don’t be discouraged, though, if the hierar-
+chies shown in Figures 1-2 and 1-3 don’t make complete sense to
+you. This chapter only provides an overview of the object-oriented
+nature of the BeOS. The remainder of the book fills in the details of
+the names, purposes, and uses of the important and commonly used
+classes.
+The BControlclass defines member functions that handle the needs common to
+any type of control. For instance, a control should be able to have two states:
+enabled or disabled. An enabled control is active, or usable by the user. A dis-
+abled control is inactive—and has a greyed-out look to let the user know it is
+unusable. To give controls the ability to implement this behavior, the BControl
+class includes the SetEnabled()member function. This routine is used to enable
+or disable a control—any kind of control. Individual types of controls will have
+some needs that aren’t common to all other types of controls and thus can’t be
+Figure 1-3. The Interface Kit classes that contribute to the various control classes
+Application Kit
+Other Be Kit
+BObjects
+Support Kit
+Application Kit
+BHandler
+BView
+BTextControl
+BColorControl
+BCheckBox
+BRadioButton
+BPictureButton
+BButton
+BControl
+
+BeOS Programming Fundamentals 13
+implemented by the BControlclass. For example, different controls (such as but-
+tons and checkboxes) have different looks. To make it possible for each control
+type to be able to draw itself, each control class defines its own constructor to ini-
+tialize the control and a Draw()member function to handle the drawing of the
+control.
+Not all BeOS classes are derived from other classes—there are a few
+classes that don’t rely on inheritance. Two examples, both of which
+happen to be in the Interface Kit, are the BRectand BPointclasses.
+The BRectclass is used to create objects representing rectangles. A
+rectangle is an easily defined, two-dimensional shape that’s consid-
+ered a basic datatype. As such, it doesn’t need to inherit the func-
+tionality of other classes. The BPointclass is not a derived class for
+the same reason.
+BeOS Programming Fundamentals
+In the previous section, you gained an understanding of how the BeOS is com-
+posed of numerous interrelated classes that are defined in software kits. Together
+these classes form an application framework from which you build your Be appli-
+cations. Your program will create objects that are based on some of the BeOS
+classes. These objects will then communicate with one another and with the oper-
+ating system itself through the use of messages. In this section, you’ll look at a few
+of the most important of these classes, and you’ll see how they’re used. You’ll also
+see how messages play a role in a BeOS program. To make the transition from the
+theoretical to the practical, I’ll supply you with a few C++ snippets—as well as the
+code for a complete Be application. In keeping with the introductory nature of this
+chapter, I’ll make this first application a trivial one.
+Messages, Threads, and Application Communication
+Earlier in this chapter, you read that the BeOS is a multithreaded operating sys-
+tem. You also read that the term multithreaded isn’t just bandied about by BeOS
+advocates for no good reason—it does in fact play a key role in why the BeOS is a
+powerful operating system. Here, you’ll get an introduction as to why that’s true.
+In Chapter 4, Windows, Views, and Messages , I’ll have a lot more to say about
+multithreading.
+Applications and messages
+A Be application begins with the creation of an object of a class type derived from
+the BApplicationclass—a class defined in the Application Kit. Figure 1-4 shows
+
+14 Chapter 1: BeOS Programming Overview
+how the BApplicationclass fits into the inheritance hierarchy of the Application
+Kit. Creating an application object establishes the application’s main thread, which
+serves as a connection between the application and the Application Server. Earlier
+in this chapter, you read that a BeOS server is software that provides services to an
+application via a software kit. The Application Server takes care of many of the
+tasks basic to any application. One such task is reporting user actions to applica-
+tions. For instance, if the user clicks the mouse button or presses a key on the
+keyboard, the Application Server reports this information to executing applica-
+tions. This information is passed in the form of a message, and is received by an
+application in its main thread. A message is itself an object—a parcel of data that
+holds details about the action being reported. The ability of the operating system
+to determine the user’s actions and then use a separate thread to pass detailed
+information about that action to a program makes your programming job easier.
+An application’s code can explicitly define BMessageobjects and use them to pass
+information. What I’ve discussed above, however, are system messages that origi-
+nate from within the BeOS itself. The movement of the mouse, the pressing of a
+keyboard key, a mouse button click in a window’s close button, and a mouse but-
+ton click and drag in a window’s resize knob are all examples of system mes-
+sages. Each type of system message has a command constant associated with it.
+This constant names the type of event the message represents. Examples of com-
+mand constants are B_KEY_DOWN, B_MOUSE_DOWN, and B_WINDOW_RESIZED.
+Figure 1-4. The inheritance hierarchy for the Application Kit
+Application Kit
+Other Be Kit
+BRoster
+BClipboard
+BObject
+Support Kit
+BHandler
+BMessage
+BMessenger
+BMessageFiller
+BMessageQueue
+BWindow
+Interface Kit
+BLooper BApplication
+
+BeOS Programming Fundamentals 15
+Message loops and message handling
+The BeOS defines classes that allow the creation of objects that can work with
+messages. The Application Kit defines two such classes: the BLooperclass and the
+BHandlerclass. The BLooperclass is used to create an object that exists in its
+own thread. The purpose of this thread is to run a message loop. As messages
+reach a message loop thread, they are placed in a queue. From this queue the
+thread extracts and dispatches messages one after another.
+A message is always dispatched to an object of the BHandlerclass. The job of the
+BHandlerobject is to handle the message it receives. How it handles a message is
+dependent on the type of message it receives.
+As shown back in Figure 1-4, the BLooperclass is derived from the BHandler
+class. This means that an object of the BLooperclass (or of a class derived from
+BLooper) can have both a message loop that dispatches messages and can receive
+these messages itself for handling. Because the BApplicationclass and the
+BWindowclass are derived from the BLooperclass, such is the case for the appli-
+cation itself and any of its windows. Just ahead you’ll read a little more on how an
+application and windows can in fact watch for and respond to messages.
+To summarize, a BLooperobject has a thread that runs a message loop that dis-
+patches messages, and a BHandlerobject receives and handles these dispatched
+messages. Because the BLooper class is derived from the BHandler class, a
+BLooper object can dispatch and receive and handle messages. A BHandler
+object can only receive and handle messages. From that description it might seem
+that all objects that deal with messages might as well be BLooperobjects. After all,
+the BLooperclass provides more functionality. As you read more about messag-
+ing, you’ll see why that path isn’t the one to take. Each BLooperobject creates a
+new thread and dominates it with a message loop—the thread shouldn’t be used
+for any other purpose. A BHandlerobject, on the other hand, doesn’t create a
+thread. While having multiple threads in a program can be advantageous, there’s
+no benefit to creating threads that go unused.
+Deﬁning and Creating Windows
+At the heart of the graphical user interface of the Be operating system is the win-
+dow. Be applications are window-based—windows are used to accept input from
+the user by way of menus and controls such as buttons, and to display output to
+the user in the form of graphics and text. The Interface Kit—the largest of the
+kits—exists to enable programmers to provide their Be applications with a graphi-
+cal user interface that includes windows. It is classes of the Interface Kit that you’ll
+be using when you write a program that displays and works with windows.
+
+16 Chapter 1: BeOS Programming Overview
+The BWindow class
+Almost all Be applications display at least one window and therefore use the
+BWindowclass—one of the dozens of classes in the Interface Kit. If you look in the
+Window.h header file that is a part of the set of header files used in the compila-
+tion of a Be program, you’ll find the declaration of the BWindow class. I’ve
+included a partial listing (note the ellipses) of this class below. Here you can see
+the names of a dozen of the roughly one hundred member functions of that class.
+Looking at the names of some of the member functions of the BWindowclass gives
+you a good indication of the functionality the class supplies to BWindow objects.
+class BWindow : public BLooper {
+public:
+                      BWindow(BRect frame,
+                              const char *title,
+                              window_type type,
+                              uint32 flags,
+                              uint32 workspace = B_CURRENT_WORKSPACE);
+...
+virtual               ~BWindow();
+virtual  void         Quit();
+         void         Close();
+virtual  void         DispatchMessage(BMessage *message, BHandler *handler);
+virtual  void         MessageReceived(BMessage *message);
+virtual  void         FrameMoved(BPoint new_position);
+...
+virtual  void         Minimize(bool minimize);
+virtual  void         Zoom(BPoint rec_position, float rec_width, float rec_
+height);
+...
+         void         MoveBy(float dx, float dy);
+         void         MoveTo(BPoint);
+         void         MoveTo(float x, float y);
+         void         ResizeBy(float dx, float dy);
+         void         ResizeTo(float width, float height);
+virtual  void         Show();
+virtual  void         Hide();
+         bool         IsHidden() const;
+...
+         const char   *Title() const;
+         void         SetTitle(const char *title);
+         bool         IsFront() const;
+         bool         IsActive() const;
+...
+}
+
+BeOS Programming Fundamentals 17
+If you’re interested in viewing the entire BWindowclass declaration,
+you can open the Window.h header file. The path that leads to the
+Window.h file will most likely be develop/headers/be/interface.
+There’s a good chance that your development environment resides
+in your root directory, so look for the develop folder there. You can
+open any header file from the Edit text editor application or from the
+BeIDE. The Metrowerks CodeWarrior BeIDE programming environ-
+ment is introduced later in this chapter and discussed in more detail
+in Chapter 2, BeIDE Projects.
+Deriving a class from BWindow
+A Be program that uses windows could simply create window objects using the
+BWindowclass. Resulting windows would then have the impressive functionality
+provided by the many BWindow member functions, but they would be very
+generic. That is, while they could be moved, resized, and closed ( BWindowmem-
+ber functions take care of such tasks), they would have no properties that made
+them unique from the windows in any other application. Instead of simply creat-
+ing a BWindowobject, programs define a class derived from the BWindowclass.
+This derived class, of course, inherits the member functions of the BWindowclass.
+Additionally, the derived class defines new member functions and possibly over-
+rides some inherited member functions to give the class the properties that win-
+dows of the application will need. The following snippet provides an example:
+class SimpleWindow : public BWindow {
+public:
+                  SimpleWindow(BRect frame);
+virtual  bool     QuitRequested();
+};
+From the BeOS naming conventions section of this chapter, you
+know that the name of a class that is a part of the BeOS API (such as
+BWindow) always starts with an uppercase “B.” As long as my own
+classes (such as SimpleWindow) don’t start with an uppercase “B,”
+anyone reading my code will be able to quickly spot classes that are
+of my own creation.
+The SimpleWindow constructor
+The SimpleWindowclass declares a constructor and one member function. The
+definition of the constructor follows.
+
+18 Chapter 1: BeOS Programming Overview
+SimpleWindow::SimpleWindow(BRect frame)
+    : BWindow(frame, "A Simple Window", B_TITLED_WINDOW, B_NOT_RESIZABLE)
+{
+}
+This constructor makes use of a technique common in Be applications: the con-
+structor for the class derived from the BWindowclass invokes the BWindowclass
+constructor. Calling the BWindow class constructor is important because the
+BWindow constructor arguments provide important information to the window
+object that is to be created. In Chapter 5, Drawing, I discuss the four BWindow
+constructor parameters in detail. In this introduction, it will suffice for me to say
+that the four parameters specify the following for a newly created window object:
+• The frame, or content area of the window (the size and screen placement of
+the window)
+• The name of the window (as it will appear in the window’s tab)
+• The type of the window (the look and feel of the window)
+• The behavior of the window (whether it has a resize knob, and so forth)
+Recall from your C++ background that when the definition of a con-
+structor is followed by a single colon and the base class constructor,
+the effect is that the base class constructor gets invoked just before
+the body of the derived class constructor executes.
+In this example, the BWindow constructor’s first argument comes from the sole
+argument passed to the SimpleWindowconstructor. A hardcoded string serves as
+the second argument to the BWindowconstructor. The third and fourth arguments
+are constants defined in the Window.h header file.
+Notice that the body of the SimpleWindowconstructor is empty. This tells you that
+the only chore of the SimpleWindowconstructor is to invoke the BWindowcon-
+structor. You have to call the BWindowconstructor; this function creates a new
+window and spawns a new thread of execution in which the window runs, and
+starts up a message loop in that same thread. In a Be program, each window
+exists in its own thread and each window is notified of system messages that
+involve the window. You’ll be pleased to find that the work of maintaining a win-
+dow’s thread and of keeping a window informed of system messages (such as a
+mouse button click in the window) is taken care of by the operating system. You’ll
+be even more pleased to find that for some system messages, even the window’s
+response to the message is handled by the BeOS. For instance, you needn’t write
+any code that watches for or handles the resizing of a window.
+
+BeOS Programming Fundamentals 19
+A window can watch for and respond to messages because the BWindowclass
+inherits from both the BLooperand BHandlerclasses (see Figure 1-4). A window
+is thus a window (from BWindow), an object that includes a message loop (from
+BLooper), and an object that responds to messages (from BHandler). This per-
+tains to BWindowobjects and, of course, objects created from classes derived from
+the BWindow class—such as objects of my SimpleWindow class type.
+The SimpleWindow QuitRequested() member function
+The SimpleWindowclass declares one member function. Here’s the definition of
+QuitRequested():
+bool SimpleWindow::QuitRequested()
+{
+    be_app->PostMessage(B_QUIT_REQUESTED);
+    return(true);
+}
+QuitRequested()is actually a member function of the BLooperclass. Because
+my SimpleWindowclass is derived from the BWindow class, which in turn is
+derived from the BLooper class, this member function is inherited by the
+SimpleWindowclass. By redeclaring QuitRequested(), SimpleWindowis over-
+riding this function.
+If I had opted not to override the QuitRequested()member function in the
+SimpleWindowclass, it would be the BLooperversion of this function that would
+execute upon a user mouse button click in a window’s close button. Like my
+SimpleWindowversion of QuitRequested(), the version of QuitRequested()
+defined by the BLooperclass returns a value of true. The effect is for an object
+of BLoopertype to kill the thread it is running in and delete itself. That sounds
+much like what I’d like to do in response to the user’s attempt to close a win-
+dow—kill the thread in which the window is running. And it is. But in my trivial
+example program, I’ll only be allowing a single window to appear on the screen.
+When the user closes that window, I’ll want to terminate the application, not just
+the window. That’s the action I’ve added to the QuitRequested()function with
+this line of code:
+be_app->PostMessage(B_QUIT_REQUESTED);
+A mouse button click in a window’s close button generates a system message that
+gets passed to the window. The window is a type of BLooper, so it captures mes-
+sages in its message loop. A window is also a type of BHandler, so it can handle
+this message (as opposed to having to pass it to some other type of object for han-
+dling). It handles the message by invoking QuitRequested().I fm y
+SimpleWindowclass didn’t override the BLooper version of this function, the
+BLooper version would be executed and the window would close—but the
+
+20 Chapter 1: BeOS Programming Overview
+application wouldn’t quit. That’s because the BLooperversion only kills its own
+thread in order to delete itself. Because SimpleWindow does override
+QuitRequested(),i ti st h e SimpleWindowversion of this function that instead
+gets invoked. The SimpleWindowversion posts a B_QUIT_REQUESTEDmessage to
+the application to tell the application to also quit. The notation used in the above
+line (be_app->PostMessage()) is new to you, so it’s worthy of examination.
+You already know that a window is a type of BLooper, but there is another very
+important type of BLooper: the application itself. An application is always repre-
+sented by an application object—an object of the BApplicationclass that is
+defined in the Application Kit (refer back to Figure 1-4 if you need to verify the
+relationship between the BLooper class and the BWindow and BApplication
+classes). The PostMessage()routine is a member function of the BLooperclass.
+A BLooperobject can invoke this function to place a message in the queue of its
+own message loop.
+As you’ll see ahead, be_app is a global variable that represents the application
+object. This variable is always available for use by your code. The above line of
+code invokes the application object’s version of the PostMessage()function. The
+message the application object places in its message loop is one that tells itself to
+quit.
+The variable be_appis a pointer to an object—the use of the mem-
+bership access operator ( ->) to invoke PostMessage()tells you
+that. As is often the case in object-oriented programming, a pointer
+to an object is simply referred to as the object itself. So in this book,
+as well as in other Be documentation, you’ll read about the “applica-
+tion object” in discussions that include mention of be_app.
+After the call to PostMessage()places a request to kill the application thread in
+the application object’s message queue, the SimpleWindow version of
+QuitRequested()returns a value of true. Remember, QuitRequested()won’t
+be called by my own code—it will be invoked by the system in response to the
+mouse button click in a window’s close button. By returning a value of true,
+QuitRequested()is telling the system that the requested service should be car-
+ried out. The system will then kill the window thread to dispose of the window.
+Previously I mentioned that the BeOS took care of system messages involving a
+window. I gave the example of window resizing being handled by the operating
+system. Yet here I’m discussing how my own code is being used to handle the
+system message that gets generated by a click in a window’s close button. It’s
+important to restate what I just discussed. It wouldn’t be necessary to include any
+
+BeOS Programming Fundamentals 21
+window-closing code in my SimpleWindowclass if my goal was only to have a
+mouse button click in the close button result in the closing of the window. The
+QuitRequested()function defined in BLooperwould take care of that by kill-
+ing the window’s thread. I, however, also want the program to terminate when a
+window’s close button is clicked. To get that extra action, I need to override
+QuitRequested().
+In summary, a mouse button click in a window’s close box automatically causes
+QuitRequested()to execute. If a window class doesn’t override this function,
+the window closes but the application continues to run. If the window class does
+override this function, what happens is determined by the code in this new ver-
+sion of the function. In my SimpleWindowclass example, I choose to have this
+function tell the application to quit and tell the window to close.
+Creating a window object
+Declaring a class and defining its constructor and member functions only serves to
+specify how objects of this class type will look and behave—it doesn’t actually cre-
+ate any such objects. To create and display a window object you’ll first declare a
+variable that will be used to point to the object:
+SimpleWindow  *aWindow;
+Before going ahead and allocating the memory for a new window object, your
+code should declare and set up a rectangle object that will serve to establish the
+size and screen placement of the new window:
+BRect   aRect;
+aRect.Set(20, 20, 200, 60);
+The above snippet first declares and creates a rectangle object. The BRect class
+was briefly mentioned earlier in this chapter—it is discussed at length in
+Chapter 6, Controls and Messages. Next, the Set()member function of the BRect
+class is called to establish the dimensions of the rectangle. The Set() function’s
+four parameters specify the left, top, right, and bottom coordinates, respectively.
+The above call to Set() establishes a rectangle that will be used to create a
+window with a left side 20 pixels in from the left of the screen and a top 20 pix-
+els down from the top of the screen. While the window that will use this rectan-
+gle would seem to have a width of 180 pixels (200–20) and a height of 40 pixels
+(60–20), it will actually have a width of 181 pixels and a height of 41 pixels. This
+apparent one-pixel discrepancy is explained in the screen and drawing coordi-
+nates section of Chapter 5.
+
+22 Chapter 1: BeOS Programming Overview
+With the window’s bounding rectangle established, it’s time to go ahead and cre-
+ate a new window. This line of code performs that feat:
+aWindow = new SimpleWindow(aRect);
+To dynamically allocate an object, use the new operator. Follow new with the con-
+structor of the class from which the object is to be created. If you glance back at
+the section that describes the SimpleWindowconstructor, you’ll be reminded that
+this function has one parameter—a BRectobject that defines the size of the win-
+dow and gets passed to the BWindow constructor.
+After allocating memory for a SimpleWindowobject, the system returns a pointer
+to this memory. That pointer is stored in the aWindowvariable. Until this new win-
+dow is deleted, it can be accessed via this pointer. This line of code provides an
+example:
+aWindow->Show();
+By default, a newly created window is not visible. To display the window, your
+code should call the BWindowmember function Show()as I’ve done in the above
+line.
+Let’s end this section by pulling together the code that’s just been introduced.
+Here’s a look—with comments—at how a window is typically created in a Be
+application:
+SimpleWindow  *aWindow;             // declare a pointer to a SimpleWindow
+                                    // object
+BRect          aRect;               // declare a rectangle object
+aRect.Set(20, 20, 200, 60);         // specify the boundaries of the
+                                    // rectangle
+aWindow = new SimpleWindow(aRect);  // create a SimpleWindow object
+aWindow->Show();                    // display the newly created window
+You may have noticed that I used the new operator to create a window object, but
+created a rectangle object without a new operator. In Be programs, objects can
+always be, and sometimes are, allocated dynamically. That is, the new operator is
+used to set aside memory in the program’s heap—as I’ve done with the window.
+Some objects, however, are allocated statically. That is, an object variable (rather
+than a pointer) is declared in order to set aside memory on the stack—as I chose
+to do with the rectangle. Creating an object that resides on the stack is typically
+done for objects that are temporary in nature. In the above snippet, the rectangle
+object fits that bill—it exists only to provide values for the window’s dimensions.
+After the creation of the window, the rectangle object is unimportant.
+
+BeOS Programming Fundamentals 23
+If you aren’t familiar with the term heap, I should explain that it is
+an area in a program’s address space that exists to hold objects that
+are created dynamically during the execution of a program. An
+object can be added or deleted from the heap without regard for its
+placement in the heap, or for the other contents of the heap. The
+stack, on the other hand, is used to store objects in a set order—
+objects are stacked one atop the other. Objects can only be added
+and removed from the top of the stack.
+Deﬁning an Application
+Every Be program must create an object that represents the application itself. This
+one object is the first one created when a program launches and the last one
+deleted when the program quits. One of the primary purposes of the application
+object is to make and maintain a connection with the Application Server. It is the
+Application Server that takes care of the low-level work such as handling interac-
+tions between windows and monitoring input from data entry sources such as the
+keyboard and mouse.
+The BApplication class
+To create the application object, you first define a class that is derived from the
+BApplicationclass and then create a single instance of that class (an instance
+being nothing more than another name for an object). From the Application.h
+header file, here’s a partial listing of the BApplication class:
+class BApplication : public BLooper {
+public:
+                      BApplication(const char * signature);
+virtual               ~BApplication();
+...
+virtual  thread_id    Run();
+virtual  void         Quit();
+...
+         void         ShowCursor();
+         void         HideCursor();
+...
+}
+Referring back to Figure 1-4, you can see that the BApplicationclass is both a
+type of BLooperand a type of BHandler. This means that an application object is
+capable of having a message loop, and is capable of handling messages in that
+loop. As it turns out, the application object runs the application’s main message
+loop. It is this loop that receives messages that affect the application.
+
+24 Chapter 1: BeOS Programming Overview
+Deriving a class from BApplication
+Every application defines a single class derived from the BApplicationclass. A
+program that will be communicating with other programs may define a number of
+member functions to handle this interapplication communication. A simpler appli-
+cation might define nothing more than a constructor, as shown here:
+class SimpleApplication : public BApplication {
+public:
+                SimpleApplication();
+};
+The SimpleApplication constructor
+When a Be program starts, it’s common practice for the program to open a single
+window without any help from the user. Because the SimpleApplication()
+constructor executes at program launch (that’s when the application object is cre-
+ated), it would make sense to let this constructor handle the job of creating and
+displaying a window. Here’s a look at how the constructor does that:
+SimpleApplication::SimpleApplication()
+    : BApplication("application/x-vnd.dps-simpleapp")
+{
+    SimpleWindow  *aWindow;
+    BRect          aRect;
+    aRect.Set(20, 20, 200, 60);
+    aWindow = new SimpleWindow(aRect);
+    aWindow->Show();
+}
+Just as my SimpleWindowclass invoked the constructor of the class it was derived
+from (the BWindowclass), so does my SimpleApplicationclass invoke the con-
+structor of the class it is derived from (the BApplicationclass). Invoking the
+BApplicationconstructor is necessary for a few reasons. The BApplication
+constructor:
+• Connects the application to the Application Server
+• Provides the application with a unique identifying signature for the program
+• Sets the global variable be_app to point to the new application object
+The connecting of an application to the Application Server has already been men-
+tioned. This connection allows the server to send messages to the application. The
+application signature is a MIME (Multipurpose Internet Mail Extensions) string. The
+phrase application/x-vnd. should lead off the signature. Any characters you want
+can follow the period, but convention states that this part of the MIME string con-
+sist of an abbreviation of your company's name, a hyphen, and then part or all of
+
+BeOS Programming Fundamentals 25
+the program name. In the above example, I've used my initials ( dps) as the com-
+pany name. I’ve elected to name my program SimpleApp, so the MIME string ends
+with simpleapp. The assignment of an application’s signature is described at
+greater length in Chapter 2. The global variable be_appwas introduced in the ear-
+lier discussion of windows. This variable, which is always available for your pro-
+gram’s use, always points to your program’s BApplication object.
+In the “Creating a window object” section that appears earlier, you saw five lines
+of code that demonstrated how a window object could be created and how its
+window could be displayed on the screen. If you compare the body of the
+SimpleApplication()constructor to those five lines, you’ll see that they are
+identical.
+Creating an application object
+After defining a class derived from the BApplicationclass, it’s time to create an
+application object of that class type. You can create such an object dynamically by
+declaring a pointer to the class type, then using the new operator to do the follow-
+ing: allocate memory, invoke a constructor, and return a pointer to the allocated
+memory. Here’s how that’s done:
+SimpleApplication  *myApplication;
+myApplication = new SimpleApplication();
+After the above code executes, myApplicationcan be used to invoke any of the
+member functions of the BApplication class (from which the
+SimpleApplicationclass is derived). In particular, soon after creating an appli-
+cation object, your Be program will invoke the BApplication Run()member
+function:
+myApplication->Run();
+The Run() function kicks off the message loop in the application’s main thread,
+and then it begins processing messages. Not only is a call to this function impor-
+tant, it’s necessary; an application won’t start running until Run() is invoked.
+A program’s application object is typically declared in main(), and is accessed by
+the global variable be_appoutside of main(). So there’s really no need to have
+the application object reside in the heap—it can be on the stack. Here’s how the
+creation of the application object looks when done using a variable local to
+main():
+SimpleApplication  myApplication;
+myApplication.Run ();
+
+26 Chapter 1: BeOS Programming Overview
+This second technique is the way the application object will be created in this
+book, but you should be aware that you may encounter code that uses the first
+technique.
+The main() Routine
+The preceding pages introduced the C++ code you’ll write to create an applica-
+tion object and start an application running. One important question remains to be
+answered, though: where does this code go? Because the application object must
+be created immediately upon application launch (to establish a connection to the
+Application Server), it should be obvious that this code must appear very early in
+the program. A C++ program always begins its execution at the start of a routine
+named main(), so it shouldn’t come as a surprise that it is in main()that you’ll
+find the above code. Here’s a look at a main()routine that is typical of a simple
+Be application:
+int  main()
+{
+    SimpleApplication   myApplication;
+    myApplication.Run();
+    return(0);
+}
+To start a program, call Run(). When the user quits the program, Run() com-
+pletes executing and the program ends. You’ll notice in the above snippet that
+between Run() and return, there is no code. Yet the program won’t start and
+then immediately end. Here’s why. The creation of the application object (via the
+declaration of the BApplication-derived object myApplication) initiates the
+program’s main thread. When Run()is then called, the Run()function takes con-
+trol of this main application thread. Run()sets up the main message loop in this
+main thread, and controls the loop and thread until the program terminates. That
+is, once called, Run() executes until the program ends.
+The SimpleApp Example Program
+The preceding pages have supplied you with all the code you need to write a Be
+application—albeit a very simple one. Because this same code (or slight variations
+of it) will appear as a part of the source code for every Be program you write, I’ve
+gone to great lengths to explain its purpose. In trying to make things perfectly
+clear, I’ll admit that I’ve been a bit verbose—I’ve managed to take a relatively
+small amount of starter code and spread it out over several pages. To return your
+focus to just how little code is needed to get a Be program started, I’ve packaged
+the preceding snippets into a single source code listing. When compiled and
+
+BeOS Programming Fundamentals 27
+linked, this source code becomes an executable named SimpleApp. When
+launched, the SimpleApp program displays a single, empty window like the one
+shown in Figure 1-5.
+The SimpleApp source code listing
+Presented next, in its entirety, is the source code for a Be application named Sim-
+pleApp. As mentioned, all of the code you’re about to see has been presented and
+discussed earlier in this chapter.
+#include <Window.h>
+#include <Application.h>
+class SimpleWindow : public BWindow {
+public:
+                    SimpleWindow(BRect frame);
+    virtual  bool   QuitRequested();
+};
+SimpleWindow::SimpleWindow(BRect frame)
+    : BWindow(frame, "A Simple Window", B_TITLED_WINDOW, B_NOT_RESIZABLE)
+{
+}
+bool SimpleWindow::QuitRequested()
+{
+    be_app->PostMessage(B_QUIT_REQUESTED);
+    return(true);
+}
+class SimpleApplication : public BApplication {
+public:
+                SimpleApplication();
+};
+SimpleApplication::SimpleApplication()
+    : BApplication("application/x-vnd.dps-simpleapp")
+{
+    SimpleWindow  *aWindow;
+    BRect          aRect;
+Figure 1-5. The window that results from running the SimpleApp program
+
+
+28 Chapter 1: BeOS Programming Overview
+    aRect.Set(20, 20, 200, 60);
+    aWindow = new SimpleWindow(aRect);
+    aWindow->Show();
+}
+main()
+{
+    SimpleApplication   myApplication;
+    myApplication.Run();
+    return(0);
+}
+What the SimpleApp program does
+When you launch SimpleApp you’ll see the window pictured in Figure 1-5. You
+can click the mouse button while the cursor is positioned over the zoom button in
+the window’s tab to expand the window to a size that fills most of your monitor.
+Click the mouse button with the cursor again positioned over the window’s zoom
+button and the window will return to its previous, much smaller, size. If you click
+and hold the mouse button while the cursor is positioned over the window’s tab,
+you can drag the window about the monitor. Most important to this discussion is
+that the SimpleApp source code includes no code to handle such tasks. The zoom-
+ing and moving of windows is handled by the system, not by the SimpleApp code.
+This simple demonstration emphasizes the power of the BeOS system software—it
+is the system software code (rather than the application code) that supplies much
+of the functionality of a program.
+What the SimpleApp program doesn’t do
+There are a number of things SimpleApp doesn’t do—things you’d expect a “real”
+Be application to do. Most notable of these omissions are menus, support of input
+by way of controls in the window, and support of output via drawing or writing to
+the window. Of course these omissions will be rectified in the balance of this
+book. Starting, in fact, with the next chapter.
+BeOS Programming Environment
+The programming tool you’ll be using to create your Be applications is the BeIDE.
+This piece of software is an integrated development environment (IDE) and it runs
+on the Be operating system (so the origin of the name BeIDE is pretty evident!).
+The development of a new program entails the creation of a number of files
+which, collectively, are often referred to as a project. Taking a look at an existing
+
+BeOS Programming Environment 29
+project is a good way to get an overview of the files that make up a project, and is
+also of benefit in understanding how these same files integrate with one another.
+In Chapter 2 I do just that. There you’ll see the HelloWorld example that’s the
+mainstay of getting introduced to a new programming language or platform. In
+that chapter, you’ll also see how an existing project (such as HelloWorld) can be
+used as the basis for an entirely new program. As a prelude to Chapter 2’s in-
+depth coverage of this project, take a look at Figures 1-6 and 1-7.
+The /boot/apps/Metrowerks folder holds the BeIDE itself, along with other folders
+that hold supporting files and projects. Figure 1-6 shows the contents of a folder
+that holds two projects, both of which are used for building a standalone Hel-
+loWorld application. The project named HelloWorld_ppc.proj is used to build a Be
+application that executes on a PowerPC-based machine running the BeOS, while
+the project named HelloWorld_x86.proj is used to build a Be application that exe-
+cutes on an Intel-based PC. In Figure 1-6 you see that a project consists of a num-
+ber of files. The filename extensions provide a hint of the types of files that make
+up any one project. A file with an extension of:
+.cpp
+Is a C++ source code file
+.h Is a header file that holds definitions used by certain C++ source code files
+Figure 1-6. The files used in the development of the HelloWorld application
+
+
+30 Chapter 1: BeOS Programming Overview
+.rsrc
+Is a resource file that holds resources that get merged with compiled source
+code
+.proj
+Is a project file that is used to organize the files used by the project
+Also shown in the HelloWorld folder in Figure 1-6 is a makefile—appropriately
+named makefile. The BeIDE programming environment supports creation of pro-
+grams from the command line. That is, you can supply the BeIDE compiler and
+linker with information by editing a makefile and then running that file from the
+BeOS Terminal application. In this book I’ll forego the command-line approach to
+application development and instead rely on the BeIDE’s project-based model. As
+you’ll see in Chapter 2, creating a project file to serve as a means of organizing the
+files used in a project takes full advantage of the Be graphical user interface.
+Figure 1-7 shows the window that appears when you use the BeIDE to open the
+project file for the HelloWorld project.
+You use a project file as a sort of command center for one project. From this one
+window, you add and remove source code files, libraries, and resource files from
+the project. You can also double-click on a source code filename in the project
+window to open, and then edit, that file. Using menu items from the File, Project,
+and Window menus in the menubar of the project window, you can perform a
+myriad of commands—including compiling source code and building an applica-
+tion.
+Figure 1-7. The project window for the HelloWorld project
+
+
+31
+Chapter 2
+In this chapter:
+• Development
+Environment File
+Organization
+• Examining an
+Existing BeIDE
+Project
+• Setting Up a New
+BeIDE Project
+• HelloWorld Source
+Code
+2
+2. BeIDE Projects
+The BeOS CD-ROM includes the BeIDE—Be’s integrated development environ-
+ment (IDE) that’s used for creating Be applications. This programming environ-
+ment consists of a number of folders and files, the most important of which are
+mentioned in this chapter. In the early stages of your Be programming studies, the
+folder of perhaps the most interest is the one that holds sample code. Within this
+folder are a number of other folders, each holding a Be-supplied project. A project
+is a collection of files that, when compiled, results in a single Be application. The
+best way to understand just what a project consists of is to take a long look at an
+existing Be project. That’s exactly what I do in this chapter.
+After examining an existing project, you’ll of course want to create your own. A
+large part of this chapter is devoted to the steps involved in doing that. Here you’ll
+see how to organize classes into header files and source code files, and how the
+resource file fits into the scheme of things.
+Development Environment File
+Organization
+You’ll find that an overview of how the many BeIDE items are organized will be
+beneficial as you look at existing BeIDE example projects and as you then start to
+write your own BeOS program.
+The BeIDE Folders
+When the BeIDE is installed on your hard drive, the folders and files that make up
+this programming environment end up in a pair of folders named develop and
+apps on your boot drive.
+
+32 Chapter 2: BeIDE Projects
+The /boot/develop folder
+In the develop folder you’ll find folders that hold header files, libraries, and devel-
+oper tools. Figure 2-1 shows the contents of the develop folder (on a PowerPC-
+based machine—a BeOS installation on an Intel-based machine results in one
+additional folder, the tools folder). This figure also shows the apps folder. The apps
+folder holds over a dozen items, though in Figure 2-1 you just see a single item
+(the Metrowerks folder, discussed later).
+In the develop folder the lib folder holds a number of library files that can be
+linked to your own compiled code. The act of creating a BeIDE project (discussed
+later) automatically handles the adding of the basic libraries ( libroot.so and libbe.so
+at this writing) to the project. As a novice Be programmer, this automatic adding
+of libraries to a new project is beneficial—it shields you from having to know the
+details of the purpose of each library. As you become proficient at programming
+for the BeOS, though, you’ll be writing code that makes use of classes not
+included in the basic libraries—so you’ll want to know more about the libraries
+included in the develop/lib folder. Of course you could simply add libraries whole-
+sale to a project to “play it safe,” but that tack would be a poor one—especially for
+programmers developing BeOS applications that are to run on Intel machines. On
+Intel, all libraries in a project will likely be linked during the building of an appli-
+cation—even if the program uses no code from one or more of the project’s librar-
+ies. The resulting application will then be unnecessarily large, or will include
+dependencies on libraries that are not needed.
+The develop folder headers holds the header files that provide the BeIDE compiler
+with an interface to the software kits. Within the headers folder is a folder named
+be. Within that folder you’ll find one folder for each software kit. In any one of
+these folders are individual header files, each defining a class that is a part of one
+Figure 2-1. Some of the key folders and files used in BeOS programming
+
+
+Development Environment File Organization 33
+kit. For instance, the BWindowclass is declared in the Window.h header file in the
+interface folder. The complete path to that file is /boot/develop/headers/be/inter-
+face/Window.h.
+The etc folder in the develop folder contains additional developer tools. As of this
+writing, the primary component in this folder is files used by programmers who
+prefer a makefile alternative to BeIDE projects. To build an application without
+creating a BeIDE project, copy the makefile template file from this folder to the
+folder that holds your source code files. Then edit the copied makefile to include
+the names of the files to compile and link. In this book, I’ll focus on the BeIDE
+project model, rather than the makefile approach, for creating an application.
+The tools folder in the develop folder is found only on Intel versions of the BeOS.
+This folder contains the x86 (Intel) compiling and linking tools and the debugger.
+The /boot/apps/Metrowerks folder
+Of most interest in the /boot/apps folder is the Metrowerks folder. The BeIDE was
+originally an integrated development environment that was created and distrib-
+uted by a company named Metrowerks. Be, Inc. has since taken over develop-
+ment and distribution of the BeIDE. Though Be now owns the BeIDE, installation
+of the environment still ends up in a folder bearing Metrowerks’ name.
+In the Metrowerks folder can be found the BeIDE application itself. The BeIDE is
+the Be integrated development environment—to develop an application, you
+launch the BeIDE and then create a new project or open an existing one.
+Also in the Metrowerks folder are a number of subdirectories that hold various sup-
+porting files and tools. The plugins folder holds BeIDE plugins that enhance the
+capabilities of the BeIDE. The stationery folder contains the basic stationery used
+in the creation of a new BeIDE project (stationery being a file that tells the BeIDE
+which files (such as which libraries) to include, and what compiler and linker set-
+tings to use in a new project). The tools folder contains the compiler and linker
+(on the PowerPC version of the BeOS) or links to the compiler and linker (on the
+Intel version of the BeOS). On the PowerPC version of the BeOS, you’ll find a
+couple of other folders in the Metrowerks folder: the debugger folder (which holds
+the PowerPC debugger, of course) and the profiling folder (which holds some
+PowerPC profiling tools).
+The sample-code folder
+Included on the BeOS CD-ROM, but not automatically placed on your hard drive
+during the installation of the BeOS, is the sample-code folder. If you elected to
+have optional items included during the BeOS installation, this folder may be on
+
+34 Chapter 2: BeIDE Projects
+your hard drive. Otherwise, look in the optional folder on the BeOS CD-ROM for
+the sample-code folder and manually copy it to your hard drive.
+The sample-code folder holds a number of Be-provided projects. Each project,
+along with the associated project files, is kept in its own folder. A Be application
+starts out as a number of files, including source code files, header files, and a
+resource file (I have much more to say about each of these file types throughout
+this chapter).
+Examining an Existing BeIDE Project
+The development of a new program entails the creation of a number of files col-
+lectively called a project. Taking a look at an existing project is a good way to get
+an overview of the files that make up a project, and is also of benefit in under-
+standing how these same files integrate with one another. Because my intent here
+is to provide an overview of what a project consists of (as opposed to exploring
+the useful and exciting things that can be accomplished via the code within the
+files of a project), I’ll stick to staid and familiar ground. On the next several pages
+I look at the HelloWorld project.
+You’ve certainly encountered a version of the HelloWorld program—regardless of
+your programming background. The Be incarnation of the HelloWorld application
+performs as expected—the phrase “Hello, World!” is written to a window.
+Figure 2-2 shows what is displayed on your screen when the HelloWorld program
+is launched.
+You may encounter a number of versions of the HelloWorld project—there’s one
+in the sample-code folder, and you may uncover other incarnations on Be CD-
+ROMs or on the Internet. So that you can follow along with me, you might want to
+use the version I selected—it’s located in its own folder in the Chapter 2 folder of
+example projects. Figure 2-3 shows the contents of this book’s version of the Hel-
+loWorld folder.
+As shown in Figure 2-3, when developing a new application, the general practice
+is to keep all of the project’s files in a single folder. To organize your own
+projects, you may want to create a new folder with a catchy name such as
+myProjects and store it in the /boot/home folder—as I’ve done in Figure 2-3. To
+Figure 2-2. The window displayed by the HelloWorld program
+
+
+Examining an Existing BeIDE Project 35
+begin experimenting, you can copy this book’s HelloWorld example folder to your
+own project folder. That way you’re sure to preserve the original, working version
+of this example.
+Project File
+A Be application developed using the BeIDE starts out as a project file. A project
+file groups and organizes the files that hold the code used for one project. By con-
+vention, a project file’s name has an extension of .proj. It’s general practice to give
+the project file the same name the application will have, with the addition of an
+underscore and then ppc for a PowerPC-based project or an underscore and then
+x86 for an Intel-based project. In Figure 2-3, you can see that for the HelloWorld
+project there are two versions of the project file: HelloWorld_ppc.proj and
+HelloWorld_x86.proj.
+To open a project file, you can either double-click on its icon or start the BeIDE
+application and choose Open from the File menu. In either case, select the project
+that’s appropriate for the platform you’re working on. When a project file is
+opened, its contents are displayed in a project window. As shown in Figure 2-4, a
+project window’s contents consist of a list of files.
+Figure 2-3. The files used in the development of a Be application
+
+
+36 Chapter 2: BeIDE Projects
+The files listed in a project window are the files to be compiled and linked
+together to form a single executable. This can be a combination of any number of
+source code, resource, and library files. The HelloWorld project window holds
+three source code files and one resource file, each of which is discussed in this
+chapter. The project window also lists one or more libraries. The number of librar-
+ies varies depending on whether you’re working on a PowerPC version or an Intel
+version of a project. Figure 2-4 shows the PowerPC version of the HelloWorld
+project. In this project, the glue-noinit.a, init_term_dyn.o, and start_dyn.o librar-
+ies collectively make up the Be runtime support library that handles the dynamic
+linking code used by any Be application. An Intel project doesn’t list these librar-
+ies—they’re linked in automatically. The libroot.so library handles library manage-
+ment, all of the Kernel Kit, and the standard C library. The libnet.so library han-
+dles networking, while the libbe.so library is a shared library that contains the C++
+classes and the global C functions that encompass many of the other kits. An Intel
+project lists only the libbe.so library—the other two libraries are always automati-
+cally linked in. The Be kits hold the software that make up much of the BeOS, so
+this library is a part of the Be operating system rather than a file included with the
+BeIDE environment.
+Library filenames will be prefaced with an indicator as to the
+project’s target platform (the platform on which the resulting applica-
+tion is to run). Figure 2-4 shows a project targeted for the PowerPC
+(Power Macintosh or BeBox) platform.
+Figure 2-4. The project window for the PowerPC version of the HelloWorld project
+
+
+Examining an Existing BeIDE Project 37
+Project activity is controlled from the Project menu located in the project window
+menubar. In Figure 2-5, you see that this menu is used to add files to and remove
+files from a project. From this menu, you can compile a single file, build an appli-
+cation, and give a built application a test run. In the “Setting Up a New BeIDE
+Project” section, you’ll make use of several of the menu items in the Project menu.
+Of the many items in the Project menu, the Run/Debug item is the most impor-
+tant. Figure 2-5 shows that this bottom menu item is named Run—but this same
+item can instead take on the name Debug. When the menu item just above this
+one says Enable Debugger, then the Run/Debug item is in the Run mode. When
+the menu item just above instead says Disable Debugger, then the Run/Debug
+item is in the Debug mode. In either case, choosing Run or Debug causes all of
+the following to happen:
+• Compile all project files that have been changed since the last compilation
+(which may be none, some, or all of the files in the project)
+• Link together the resulting object code
+• Merge the resource code from any resource files to the linked object code to
+make (build) an executable (an application)
+• Launch the resulting application in order for you to test it (if no compile or
+link errors occurred)
+Figure 2-5. The Project menu in the menubar of a BeIDE project window
+
+
+38 Chapter 2: BeIDE Projects
+If the Run/Debug menu is in Debug mode, then the last step in the above list
+takes place in the debugger. That is, the application is launched in the appropri-
+ate debugger (MWDebug-Be for PowerPC projects and bdb for Intel projects).
+Many of the other items in the Project menu carry out a subset of the operations
+that are collectively performed by the Run/Debug item.
+If you haven’t compiled any Be source code yet, go ahead and give it a try now.
+Open the HelloWorld project file. To avoid the debugger during this first test,
+make sure the Project menu item just above the Run/Debug item says Enable
+Debugger (select the item if it doesn’t say that). Now choose Run from the Project
+menu to compile the project’s code and run the resulting HelloWorld application.
+Source Code and Header Files
+The BeOS is a C++ application framework, so your source code will be written in
+C++ and saved in source code files that have an extension of .cpp. To open an
+existing source code file that is a part of a project, double-click on the file’s name
+in the project window. That’s what I did for the HelloWorld.cpp file that’s part of
+the HelloWorld project—the result is shown in Figure 2-6.
+Figure 2-6. The source code window for the HelloWorld.cpp source code file
+
+
+Examining an Existing BeIDE Project 39
+Most of your code will be kept in source code files. Code that might be common
+to more than one file may be saved to a header file with an extension of .h. While
+you can keep a project’s code in as few or as many source code and header files
+as desired, you’ll want to follow the way Be does things in its examples.
+Project ﬁle organization convention
+Be example projects organize source code into files corresponding to a conven-
+tion that’s common in object-oriented programming. The declaration, or specifier,
+of an application-defined class exists in its own header file. The definitions, or
+implementations, of the member functions of this class are saved together in a sin-
+gle source code file. Both the header file and the source code file have the same
+name as the class, with respective extensions of .h and .cpp.
+There’s one notable exception to this naming convention. A project usually
+includes a header file and source code file with the same name as the project (and
+thus the same name as the application that will be built from the project). The
+header file holds the definition of the class derived from the BApplicationclass.
+The source code file holds the implementations of the member functions of this
+BApplication-derived class, as well as the main() function.
+File organization and the HelloWorld project
+Now let’s take a look at the HelloWorld project to see if it follows the above con-
+vention. Because this example is based on a project from Be, Inc., you can guess
+that it does, but you’ll want to bear with me just the same. The point here isn’t to
+see if the HelloWorld project follows the described system of organizing files, it’s
+to examine an existing project to clarify the class/file relationship.
+Back in Figure 2-4 you saw that the HelloWorld project window displays the
+names of three source code files: HelloView.cpp, HelloWindow.cpp, and Hel-
+loWorld.cpp. While it’s not obvious from the project window, there is also a
+header file that corresponds to each of these source code files (opening a source
+code file and looking at its #includedirectives reveals that information). Accord-
+ing to the previous discussion, you’d expect that the HelloView.h file holds a list-
+ing for a class named HelloView. Here’s the code from that file:
+// -----------------------------------------------------------
+// HelloView.h
+class HelloView: public BView {
+public:
+               HelloView(BRect frame, char *name);
+virtual  void  AttachedToWindow();
+virtual  void  Draw(BRect updateRect);
+};
+
+40 Chapter 2: BeIDE Projects
+Looking at the code in the HelloView.cpp file, we’d expect to see the implementa-
+tions of the three member functions declared in the HelloViewclass definition.
+And we do:
+// -----------------------------------------------------------
+// HelloView.cpp
+#include "HelloView.h"
+HelloView::HelloView(BRect rect, char *name)
+    : BView(rect, name, B_FOLLOW_ALL, B_WILL_DRAW)
+{
+    ...
+}
+void HelloView::AttachedToWindow()
+{
+    ...
+}
+void HelloView::Draw(BRect updateRect)
+{
+    ...
+}
+As you can see from the HelloView.cpp listing, I’m saving a little ink by not show-
+ing all of the code in the project’s files. Nor do I describe the code I do show.
+Here I’m only interested in demonstrating the relationship between a project’s files
+and the classes defined by that project. I do, however, take care of both of those
+omissions at the end of this chapter in the “HelloWorld Source Code” section.
+I said I wouldn’t discuss the HelloWorld source code here. Out of
+decency to the very curious, though, I will make a few quick com-
+ments. You’re familiar with the SimpleApp example that was intro-
+duced in Chapter 1, BeOS Programming Overview . That example
+defined two classes. One was named SimpleWindowand was
+derived from the BWindowclass. It was used to display a window.
+The second class was named SimpleApplicationand was derived
+from the BApplicationclass. Every Be program needs to define
+such a class. The HelloWorld example discussed here defines simi-
+lar classes named HelloWindowand HelloApplication. It also
+defines a third class named HelloView, which is derived from the
+BView class. Before writing or drawing to a window, a program
+must define a view—an area in the window to which drawing
+should be directed. The SimpleApp program didn’t draw to its win-
+dow, so it didn’t need a class derived from the BView class.
+
+Examining an Existing BeIDE Project 41
+The second source code file shown in the project window in Figure 2-4 is Hello-
+Window.cpp. This file has a corresponding header file named HelloWindow.h.I n
+this file we expect to find the declaration of a class named HelloWindow—and we
+do:
+// -----------------------------------------------------------
+// HelloWindow.h
+class HelloWindow : public BWindow {
+public:
+               HelloWindow(BRect frame);
+virtual  bool  QuitRequested();
+};
+The HelloWindow.cpp file contains the source code for the two HelloWindow
+member functions, HelloWindow() and QuitRequested():
+// -----------------------------------------------------------
+// HelloWindow.cpp
+#include "HelloWindow.h"
+HelloWindow::HelloWindow(BRect frame)
+    : BWindow(frame, "Hello", B_TITLED_WINDOW,
+              B_NOT_RESIZABLE | B_NOT_ZOOMABLE)
+{
+    ...
+}
+bool HelloWindow::QuitRequested()
+{
+    ...
+}
+Earlier I stated that the header file that bears the name of the project should hold
+the declaration of the project’s application class—the class derived from the
+BApplicationclass. Here you see that the HelloWorld.h header file does indeed
+hold this declaration:
+// -----------------------------------------------------------
+// HelloWorld.h
+class HelloApplication : public BApplication {
+public:
+          HelloApplication();
+};
+The source code file with the name of the project should hold the code for the
+implementation of the member functions of the application class as well as the
+main() function. HelloWorld.cpp does hold the following code.
+
+42 Chapter 2: BeIDE Projects
+// -----------------------------------------------------------
+// HelloWorld.cpp
+#include "HelloWindow.h"
+#include "HelloView.h"
+#include "HelloWorld.h"
+int  main()
+{
+    ...
+    ...
+}
+HelloApplication::HelloApplication()
+    : BApplication("application/x-vnd.Be-HLWD")
+{
+    ...
+    ...
+}
+While I omitted the code that makes up the body of each member function of
+each class in the HelloWorld project, you may still have picked up on similarities
+between the HelloWorld source code and the source code of the Chapter 1 exam-
+ple, SimpleApp. In the section “HelloWorld Source Code” I point out all of the
+similarities and discuss the differences.
+In looking at existing source code, you may encounter a
+BApplicationconstructor argument that’s four characters between
+single quotes rather than a long, double-quoted MIME string. The
+four-character method is the old way of supplying a signature to an
+application, and is dated. The newer MIME string format is dis-
+cussed in more detail later in this chapter.
+Resources and the Resource File
+It’s nice to sum up a programming concept in a single sentence, as in “a pointer is
+a reference to a specific area in memory.” Unfortunately, such conciseness isn’t
+always possible. Such is the case with the subject of resources. I’ll begin with a
+short summation—“a resource is code that represents one element of a pro-
+gram”—but adding clarity to that vague explanation necessitates a couple of para-
+graphs.
+The “element of a program” I speak of is usually thought of as one part, or entity,
+of a program’s graphical user interface. For instance, some operating systems make
+it easy to represent a window or menu as a resource. But a resource doesn’t have
+to represent something graphical. For instance, an application’s signature—a short,
+
+Examining an Existing BeIDE Project 43
+unique string that helps the operating system differentiate the application from all
+other applications—is anything but graphical. Yet it can be a resource. While an
+application’s signature isn’t graphical in nature, the way in which it can be created
+and edited can be thought of as graphical. For instance, one could imagine a sim-
+ple editor that had a Create Application Signature menu item which, when
+selected, displayed a text box in which a short string was typed. The editor would
+then be responsible for saving these typed characters as a resource. So it turns out
+that rather than representing something that is itself graphical, a resource is usu-
+ally something that can be created and edited graphically.
+Being graphically editable is typically one trait that makes an element a candidate
+to be represented by a resource. Since some programmer will have to design a
+special editor that is capable of graphically editing a resource, another require-
+ment is that the element be something common to most or all programs.
+You’ve just read that different program elements exist as resources for a variety of
+reasons. An application’s icon is a good example. First, an icon is a small picture,
+so it of course is an entity that lends itself to being easily edited graphically. Sec-
+ond, all applications have an icon that is used to represent the application on the
+desktop, so it made sense for someone to expend the effort to create an editor
+capable of editing icons. Finally, the BeOS needs the data that defines an applica-
+tion’s icon even when the application isn’t running, so that it can display the icon
+on the desktop at all times.
+There are different types of resources, and the BeOS keeps track of these different
+types by using a different 32-bit integer for each resource type. As a convenience
+to programmers, a four-character constant is often used to define this integer. Con-
+sider the icon that represents an application on the desktop. The data that defines
+this icon exists as a resource, and its type is ‘ICON.’ Most programmers find it eas-
+ier to remember the four-character constant ‘ICON’ than the numerical value this
+constant represents.
+While a resource type is surrounded in single quotes in this book
+and in Be documentation as well, the quotes aren’t a part of the
+resource type—a resource type is simply the four characters (or an
+actual 32-bit numerical value). The quotes are used only to make it
+obvious that a resource type is being discussed. This is important
+because a resource type can be in lowercase, and it can include a
+space or spaces. Placing an icon type in quotes sets it apart from the
+rest of the text that appears with it.
+
+44 Chapter 2: BeIDE Projects
+Application-information resource
+There’s one other reason that a certain part of a program will exist as a resource—
+a reason unrelated to the graphical nature of the element or its ability to be edited
+graphically. Because of the way in which resources are stored in an executable,
+resource information is available to the BeOS even when the application isn’t
+running. The BeOS needs some information about an application in order to
+be able to effectively communicate with it. This information can be kept together
+in a single resource of type ‘APPI’ (for “application information”) in the applica-
+tion. An ‘APPI’ resource consists of the following pieces of information about an
+application:
+Launch Behavior
+The launch characteristics of a Be application can fall into one of three catego-
+ries. Single launch is the typical behavior—no matter how many times a user
+double-clicks on the application’s icon, only one instance of the executable is
+loaded into memory and executed (that is, double-clicking on an application’s
+icon a second time has no effect). It’s possible for two versions of a single
+launch application to end up in memory if the user makes a duplicate of the
+original executable and then double-clicks on each. Exclusive launch is a
+behavior that restricts this from occurring. Under no circumstance can two ver-
+sions of a program execute at the same time. Multiple launch is a behavior
+that allows any number of instances of a single copy of a program to execute
+simultaneously.
+Background App
+An application can forego a user interface and run in the background only. If
+an application is marked as a background app, it behaves in this way and
+won’t be named in the Deskbar.
+Argv Only
+An application can be excluded from receiving messages from the BeOS (refer
+to Chapter 1 for an introduction to messages). Marking an application as argv
+only means that the only information the application receives comes from the
+argc and argv command-line arguments that can be optionally passed to the
+program’s main() routine.
+Signature
+Each application has a string that lets the BeOS view the application as unique
+from all others. Obviously, no two applications should share the same signa-
+ture. For your own test programs, the signature you choose isn’t too impor-
+tant. Should you decide to distribute one of your applications to the Be com-
+munity, though, you’ll want to put a little effort into selecting a signature. Be’s
+recommended format is “application/x-vnd.VendorName-ApplicationName”.
+
+Examining an Existing BeIDE Project 45
+Replacing VendorName with your company’s name should provide a unique
+signature for your application.
+Here I’ll look at ‘APPI’ information for an existing project that already includes a
+resource file. In this chapter’s “Setting Up a New BeIDE Project” section you’ll find
+information on creating a resource file and editing its ‘APPI’ information. To view
+the ‘APPI’ information in a project’s resource file, double-click on its name in the
+project window. That launches the FileTypes application (which can also be
+launched by choosing it from the preferences folder in the Be menu) and opens
+two windows. Figure 2-7 shows the main window of FileTypes.
+To view or edit an application’s ‘APPI’ resource information, work in the second of
+FileTypes’ two windows. Figure 2-8 shows this window for the HelloWorld appli-
+cation.
+The application’s launch behavior is determined based on which of the three
+Launch radio buttons is on—Single Launch, Multiple Launch, or Exclusive Launch
+(only one can be on at any given time).
+Whether or not the application is a background app is determined by the status of
+the Background App checkbox. Whether or not the application is capable of
+receiving messages is determined by the status of the Argv Only checkbox. While
+these two items appear grouped together in the Application Flags area, they aren’t
+related. Neither, either, or both can be checked at the same time.
+Figure 2-7. The main FileTypes window
+
+
+46 Chapter 2: BeIDE Projects
+An application’s signature is based on the MIME string you enter in the signature
+edit box of the FileTypes window. If a signature appears here, the string passed to
+the BApplicationconstructor will be ignored (refer to Chapter 1). If no signa-
+ture appears here, the string passed to the BApplicationconstructor will be
+used. Thus, by entering a string in the FileTypes window, you’re making the
+BApplicationconstructor argument immaterial. Figure 2-8 shows the signature
+for the HelloWorld application used throughout this chapter.
+If you make any changes to a project’s resource file, save them by choosing Save
+from the File menu of FileTypes (the File menu’s other item, Save into Resource
+File, is discussed in the “Setting Up a New BeIDE Project” section of this chapter).
+Icon resource
+An icon could be described within source code (and, in the “old days,” that was in
+fact how icons were described), but the specification of individual pixel colors in
+source code is difficult and tedious work. Rather than attempting to specify the
+colors of each pixel of an icon from within source code, a BeOS application’s icon
+can be created using a special graphical editor built into the FileTypes application.
+The graphical editor in FileTypes is used in a manner similar to the way you use a
+graphics paint program—you select a color from a palette of colors and then use a
+Figure 2-8. Viewing the ‘APPI’ information for the HelloWorld application
+
+
+Setting Up a New BeIDE Project 47
+pencil tool to click on individual pixels to designate that they take on that color.
+See Figure 2-9 to get an idea of what the graphical editor in FileTypes looks like.
+In FileTypes you simply draw the icon. You can then save the icon to a project’s
+resource file so that each time an application is built from the project, your icon is
+merged with the application (and becomes the icon viewed on the desktop by the
+user). To view or edit the icon stored in the resource file of an existing project,
+you first double-click on the resource filename in the project window to open the
+resource file. After FileTypes opens the resource file, double-click on the small
+icon box located at the upper right of the FileTypes window; you’ll see the win-
+dow shown in Figure 2-9.
+Setting Up a New BeIDE Project
+In the previous section, you read that an application starts as a Be project. The Be
+project consists of a project file, source code files, header files, libraries, and
+a resource file. The project file itself doesn’t hold any code; it serves as a means to
+organize all the other files in the project. The project file also serves as the project
+Figure 2-9. The icon editing window and palettes displayed by FileTypes
+
+
+48 Chapter 2: BeIDE Projects
+“command center” from which you compile code and build and test the execut-
+able. A close look at the HelloWorld project clarified many of these concepts.
+When you set out to develop your own application, you’ll find that you may be
+able to save some effort if you don’t start from scratch, but instead duplicate a
+folder that holds the files of an existing project. Consider this scenario: I want to
+create a very simple children’s game—perhaps a tic-tac-toe game. I know that the
+HelloWorld project results in a program that displays a single window and draws
+to it. That represents a good part of what my game will need to do, so it makes
+sense for me to base my game on the HelloWorld project, and then modify and
+add to the HelloWorld source code as needed. If your program will be a complex
+one, or one for which you can’t find a similar “base” program to start with, this
+approach won’t be as fruitful. In such cases you’ll want to start with a new project.
+In this section, I’ll discuss each step of the process of setting up a new project first
+in general terms. I’ll also carry out each step using the HelloWorld project to pro-
+vide a specific example. So you see, I had good reason for devoting the previous
+several pages to a look at the HelloWorld project. While I use the small Hel-
+loWorld project for simplicity, the steps discussed on the following pages apply
+just as well to projects of a much larger scale.
+In the above paragraphs, I refer to using code written by others.
+Before doing that you’ll of course want to make sure that you’re
+allowed to do so! The BeOS CD-ROM comes with a number of
+example projects that fall into the category of projects that are avail-
+able for your own personal use. The source code that makes up the
+example projects is copyright Be, Inc., but Be, Inc. has granted unre-
+stricted permission for anyone to use and alter any of this source
+code. I’ve taken advantage of this fact and used these projects as the
+basis for the numerous examples that appear in this book. In turn,
+you’re free to use without restrictions the example code in this book
+for your own projects.
+The following is an overview of the major steps you’ll carry out each time you cre-
+ate a new project. While on the surface it may appear that performing these steps
+involves a lot of work, you’ll find that after you’ve set up a few new projects the
+process becomes quite routine, and doesn’t take much time at all. All of the steps
+are discussed in the sections that follow this list.
+1. Find an existing project that is used to build a program that has similarities to
+the program you’re to develop.
+2. Duplicate the existing project folder and its contents.
+
+Setting Up a New BeIDE Project 49
+3. Open the new project folder and change the names of the project, source
+code, header, and resource files to names that reflect the nature of the project
+you’re working on.
+4. Open the newly renamed project and drag the renamed source code files and
+resource file from the folder and drop them into the project window.
+5. Remove the now obsolete source code and resource filenames from the
+project window.
+6. Edit the name of the constants in the #ifndefdirective in the header files and
+the #includes in the source files.
+7. Test the project’s code by building an application (here you’re verifying that
+the original source code is error-free before you start modifying it)
+8. If there are library-related errors, create a new project (which will automati-
+cally include the most recent versions of each library) and add the source
+code files and resource file to the new project.
+9. If there are compilation errors, correct the source code that caused the errors.
+10. Open the header files and change application-defined class names in the
+header files to names that make sense for the project you’re working on.
+11. Change all usage of application-defined class names in the source files to
+match the changes you made in the header files.
+12. Open the resource file using FileTypes and modify any of the ‘APPI’ resource
+information and the icon.
+13. Set the name for the executable to be built.
+14. Build a new application from the modified BeIDE project.
+No new functionality will have been added to the program that gets built from the
+new project—it will behave identically to the program that results from the origi-
+nal project. So why go through the above busy-work? Executing the above steps
+results in a new project that includes source code files that define and use classes
+with new names—names that make sense to you. This will be beneficial when you
+start the real work—implementing the functionality your new program requires.
+The above list isn’t an iron-clad set of steps you must follow. Other
+programmers have their own slightly (or, perhaps, very) different
+guidelines they follow when starting a new project. If you’re new to
+the BeIDE, the BeOS, or both, though, you might want to follow my
+steps now. As you get comfortable with working in a project-based
+programming environment, you can vary the steps to match your
+preferred way of doing things.
+
+50 Chapter 2: BeIDE Projects
+Selecting and Setting Up a Base Project
+As mentioned, you’ll get off to the best start in your programming endeavor by
+finding a project that matches the following criteria:
+• The application that is built from the original project has several features com-
+mon to the program you’re to develop.
+• You have access to the project and all its source code and resource files.
+• It’s made clear that the project’s source code can be modified and redistrib-
+uted, or you have the developer’s permission to do so.
+Once you’ve found a project that meets the above conditions, you’ve performed
+Step 1 from the previous section’s numbered list.
+Step 2 involves creating a copy of the project folder and its contents. After doing
+that, rename the new folder to something appropriate for the project you’re
+embarking upon. Usually a project folder has the same name that the final applica-
+tion that gets built from the project will have. Here I’m making a new project
+based on the HelloWorld project only for the sake of providing a specific exam-
+ple, so after duplicating the HelloWorld folder, I’ll simply change the name of the
+folder from HelloWorld copy to MyHelloWorld (each of these folders can be found
+in the Chapter 2 examples folder available on the O’Reilly web site).
+Step 3 is the renaming of the project-related files. Double-click on the new folder
+to reveal its contents. Click on the name of any one of the header files and type a
+new name for the file. For my new MyHelloWorld project I’ll rename the Hello-
+View.h, HelloWindow.h, and HelloWorld.h header files to MyHelloView.h, MyHel-
+loWindow.h, and MyHelloWorld.h, respectively. Next, rename the source code files
+(so, for example, HelloWorld.cpp becomes MyHelloWorld.cpp) and the resource
+file (here, from HelloWorld.rsrc to MyHelloWorld.rsrc). Now rename the project
+file. Again, choose a name appropriate to the project. Typically, the project file has
+the same name the application will have, with an extension of x86.proj or ppc.proj
+added. I’ll change the PowerPC version of the HelloWorld project by updating the
+project filename from HelloWorld_ppc.proj to MyHelloWorld_ppc.proj.
+Steps 4 and 5 are performed to get the project to recognize the newly named files.
+After the name changes are made, double-click on the project file to open it. The
+project window will appear on your screen. If you renamed a file from the desk-
+top, the project file that includes that file will list it by its original, now invalid,
+name. That necessitates adding the file by its new name and removing the origi-
+nal file from the project. To add the newly named files, select them from the desk-
+top (click on each) and drag and drop them into the project window. In the
+project window, drag each to its appropriate group (for instance, place MyHel-
+loWorld.cpp in the Sources group). To remove the original files from the project,
+
+Setting Up a New BeIDE Project 51
+select each and choose Remove Selected Items from the Project menu. For the
+MyHelloWorld project, the resulting project window looks like the one shown in
+Figure 2-10.
+Testing the Base Project
+The new project now has newly named files in it, but these files hold the code
+from the original project. Before adding new functionality to the code, verify that it
+compiles without error (this is Step 7 from the previous list). Before compiling the
+code, though, perform Step 6—update the #includesat the top of each source
+code file so that they match the new names of the header files. For example, near
+the top of MyHelloView.cpp is this #include:
+#ifndef HELLO_VIEW_H
+#include "HelloView.h"
+#endif
+I’ve changed the HelloView.h header file to MyHelloView.h, so this #include
+needs to be edited. While I’m doing that, I’ll change HELLO_VIEW_Hto the more
+appropriate MY_HELLO_VIEW_H(though I could leave this as is—it’s simply a con-
+stant I define in the MyHelloView.h header file).
+#ifndef MY_HELLO_VIEW_H
+#include "MyHelloView.h"
+#endif
+Because I changed the name of the constant HELLO_VIEW_Hin the MyHelloView.
+cpp source file, I need to change this same constant in the MyHelloView.h header
+file. Originally the header file contained this code:
+#ifndef HELLO_VIEW_H
+#define HELLO_VIEW_H
+Figure 2-10. The MyHelloWorld project window with renamed files in it
+
+
+52 Chapter 2: BeIDE Projects
+Now that code should look like this:
+#ifndef MY_HELLO_VIEW_H
+#define MY_HELLO_VIEW_H
+Finally, test the code by choosing Run from the Project menu. Later, if you experi-
+ence compilation errors after you’ve introduced changes to the original code,
+you’ll know that the errors are a direct result of your changes and not related to
+problems with the original code.
+If the building of an application is successful, Steps 8 and 9 are skipped. If the
+attempt to build an application results in library-related errors (such as a library
+“file not found” type of error), you’re probably working with a project created
+under a previous version of the BeIDE. The easiest way to get the proper libraries
+into a project is to follow Step 8—create a new project based on one of the Be-
+supplied project stationeries. A new BeIDE project file can be created by choosing
+New Project from the File menu of an existing project. When you do that, the New
+Project dialog box appears to let you choose a project stationery from which the
+new project is to be based. The project stationery is nothing more than a template
+that specifies which libraries and project settings are best suited for the type of
+project you’re creating. Here are definitions of the more important stationeries:
+BeApp
+Stationery that links against the standard libraries applications need.
+EverythingApp
+Stationery that links against all of the Be libraries.
+KernelDriver
+A basic template for writing a kernel driver.
+SharedLib
+Stationery used to create a basic library or add-on, this links against the basic
+Be libraries.
+BeSTL
+Stationery used to create an application that includes the C++ standard librar-
+ies (including STL and the basic iostream functions).
+In Figure 2-11, I’m choosing the BeApp project stationery under the ppc heading in
+order to create a project that’s set up to generate a Be application targeted for the
+PowerPC platform (the list of project stationeries you see may differ depending on
+the version of the BeOS you’re using and the processor (PowerPC or Intel) in your
+machine). Note that when creating a new project you’ll want to uncheck the Cre-
+ate Folder checkbox in the New Project dialog box and specify that the new
+project end up in the folder that holds all the renamed files.
+
+Setting Up a New BeIDE Project 53
+The act of creating a new project doesn’t provide you with any source code files
+or a resource file—you’ll need to repeat Step 4. That is, drag and drop the neces-
+sary files from the desktop folder to the new project window.
+If the building of an application results in compilation errors, now’s the time to
+correct them. This is Step 9. Only after you successfully build an application does
+it make sense to start making changes to the project’s source code.
+Preliminary Code Changes
+You’ll of course be making changes to the source code in the source code files.
+The most interesting of these changes will be the ones that turn the original code
+into code that results in an application that is distinctly your own. First, however,
+you need to make some preliminary source code changes. You’ve changed the
+names of the files, including the header files, so you’ll need to search for and
+change header file references in the source code files. You’ll also want to change
+the names of the classes already defined to match the names you’ve given to the
+header files.
+Header ﬁle code changes
+Step 10 in the list of new project setup tasks is the changing of application-defined
+class names in the header files. Begin the changes by opening any one of the
+header files. The quickest way to do that is to click on the small arrow icon to the
+right of one of the source code filenames in the project window. Doing that dis-
+plays a menu that lists the header files included in the selected source code file.
+To open a header file, simply select it from this popup menu. With a header file
+open, make the following changes to the code.
+Figure 2-11. Choosing a stationery on which to base a new project
+
+
+54 Chapter 2: BeIDE Projects
+• Add the new name of the file to the file’s description comment section.
+• If you haven’t already done so, rename the application-defined constant that is
+used in the #ifndef and #define preprocessor directives.
+• Rename the file’s application-defined class.
+• Rename the class constructor to match the new name you’ve give to the appli-
+cation-defined class.
+The above steps are carried out in the same way regardless of the project you start
+with. To provide a specific example of how these changes are implemented, I’ll
+change the HelloView.h header file from the HelloWorld project. The following
+listing shows the original version of the HelloView.h file. Refer to it in the discus-
+sion that follows the listing.
+// -----------------------------------------------------------
+    HelloView.h
+    Copyright 1995 Be Incorporated, All Rights Reserved.
+#ifndef HELLO_VIEW_H
+#define HELLO_VIEW_H
+#ifndef _VIEW_H
+#include <View.h>
+#endif
+class HelloView : public BView {
+public:
+               HelloView(BRect frame, char *name);
+virtual  void  AttachedToWindow();
+virtual  void  Draw(BRect updateRect);
+};
+#endif
+// -----------------------------------------------------------
+The first change to the header file, the altering of the file’s descriptive comment,
+needs little discussion. You may want to leave the original name intact as a cour-
+tesy to the original author. I’ve done that in the MyHelloView.h file (the listing of
+which follows this discussion).
+The HELLO_VIEW_Hconstant is defined to eliminate the possibility of the code in
+this header file being included more than once in the same source code file. Ear-
+lier I changed its name to MY_HELLO_VIEW_Hto reflect the new name I’ve given to
+this header file (MyHelloView.h):
+#ifndef MY_HELLO_VIEW_H
+#define MY_HELLO_VIEW_H
+
+Setting Up a New BeIDE Project 55
+The _VIEW_Hconstant is a BeOS-defined constant (it’s used to ensure that the
+BeOS header file View.h doesn’t get included multiple times) so it can be left as is.
+If you aren’t clear on the usage of the #ifndefpreprocessor directive in Be files,
+refer to the “Header Files and Preprocessor Directives” sidebar.
+The original class defined in the HelloView.h file was named HelloView. I’ve
+renamed that class to MyHelloViewto match the name I’ve given the header file. I
+also changed the name of the class constructor from HelloView() to
+MyHelloView(). All of lines of code that include changes are shown in bold in
+the following listing of MyHelloView.h:
+// -----------------------------------------------------------
+    MyHelloView.h
+    Dan Parks Sydow
+    1999
+    Based on source code from:
+    HelloView.h
+    Copyright 1995 Be Incorporated, All Rights Reserved.
+// -----------------------------------------------------------
+#ifndef MY_HELLO_VIEW_H
+#define MY_HELLO_VIEW_H
+#ifndef _VIEW_H
+#include <View.h>
+#endif
+class MyHelloView : public BView {
+public:
+               MyHelloView(BRect frame, char *name);
+virtual  void  AttachedToWindow();
+virtual  void  Draw(BRect updateRect);
+};
+#endif
+// -----------------------------------------------------------
+Notice that I’ve stopped short of making any substantial changes to the applica-
+tion-defined class. While you may be tempted to “get going” and start adding new
+member functions to a class, it’s best to wait. First, make all the name changes in
+the header files. Then update the source code files so that any usage of applica-
+tion-defined classes reflects the new names (that’s discussed next). Finally, verify
+that everything works by compiling the code. Only after you’re satisfied that all the
+preliminaries are taken care of will you want to start making significant changes to
+the code.
+
+56 Chapter 2: BeIDE Projects
+For the MyHelloWorld project, I’d repeat the above process on the MyHelloWin-
+dow.h and MyHelloWorld.h header files.
+#endif source code ﬁle code changes
+After you make the changes to the header files, it’s time to update the source code
+files—this is Step 10 in the list of new project setup steps. Begin by double-click-
+ing on one of the source code filenames in the project window. Then make the
+following changes to the code:
+Header Files and Preprocessor Directives
+In a large project that consists of numerous source code files and header files,
+the potential for a source code file to include the same header file more than
+once exists. Consider three files from a large project: source file S1.cpp and
+header files H1.h and H2.h.I f S1.cpp includes both H1.h and H2.h, and H1.h
+includes H2.h, then S1.cpp will include the code fromH2.h twice (once directly
+and once indirectly viaH1.h). Such an event results in a compilation error that,
+given the dependency of the files, can be difficult to remedy.
+To coordinate the inclusion of header file code in source code files, Be projects
+typically use the “if not defined” (#ifndef) preprocessor conditional directive
+to define a constant in a header file and to check for the definition of that con-
+stant in a source code file. This is a standard technique used by many C and
+C++ programmers—if you’re familiar with it, you can feel free to skip the
+remainder of this sidebar.
+A header file in a Be project begins by checking to see if a particular constant
+is defined. If it isn’t defined, the header file defines it. Because all the remaining
+code in the header file lies between the #ifndefand the #endifdirectives,
+if the constant is already defined, the entire contents of the header file are
+skipped. Here’s that code from the HelloWorld project’s HelloView.h header
+file:
+#ifndef HELLO_VIEW_H
+#define HELLO_VIEW_H
+// class declaration
+#endif
+Before including a header file, a source code file checks to see if the constant
+defined in the header file is in fact defined. If it isn’t defined, the source code
+file does include the header file. Here’s that code from the HelloView.cpp
+source code file:
+#ifndef HELLO_VIEW_H
+#include "HelloView.h"
+
+Setting Up a New BeIDE Project 57
+• Add the new name of the file to the file’s description comment section.
+• Rename the application-defined constant that is used in the #ifndef and
+#definepreprocessor directives to match the renamed constant in the corre-
+sponding header file.
+• Rename any header filenames that follow #includedirectives to match the
+renamed header files.
+• Rename all occurrences of any application-defined classes to match the
+renamed classes in the other project header files.
+As with header files changes, the source code file changes listed above apply to
+any project. Again, I’ll use a file from the HelloWorld project to provide a specific
+example. The following listing shows the original version of the HelloView.cpp file:
+// -----------------------------------------------------------
+    HelloView.cpp
+    Copyright 1995 Be Incorporated, All Rights Reserved.
+// -----------------------------------------------------------
+#ifndef HELLO_VIEW_H
+#include "HelloView.h"
+#endif
+HelloView::HelloView(BRect rect, char *name)
+    : BView(rect, name, B_FOLLOW_ALL, B_WILL_DRAW)
+{
+    ...
+}
+void HelloView::AttachedToWindow()
+{
+    ...
+}
+void HelloView::Draw(BRect updateRect)
+{
+    ...
+}
+// -----------------------------------------------------------
+Next you’ll see the edited version of HelloView.cpp—it’s now the code for a file
+named MyHelloView.cpp. Because there are no occurrences of any application-
+defined class names in the code in the bodies of any of the member functions, I’ve
+omitted that code for brevity.
+// -----------------------------------------------------------
+    MyHelloView.cpp
+    Dan Parks Sydow
+
+58 Chapter 2: BeIDE Projects
+    1999
+    Based on source code from:
+    HelloView.cpp
+    Copyright 1995 Be Incorporated, All Rights Reserved.
+// -----------------------------------------------------------
+#ifndef MY_HELLO_VIEW_H
+#include "MyHelloView.h"
+#endif
+MyHelloView::MyHelloView(BRect rect, char *name)
+    : BView(rect, name, B_FOLLOW_ALL, B_WILL_DRAW)
+{
+    ...
+}
+void MyHelloView::AttachedToWindow()
+{
+    ...
+}
+void MyHelloView::Draw(BRect updateRect)
+{
+    ...
+}
+// -----------------------------------------------------------
+These steps need to be repeated for each source code file in the project. As you
+do that, note that a source code file may include occurrences of application-
+defined classes other than the class defined in the corresponding header file. Con-
+sider this snippet from the original HelloWorld.cpp file:
+HelloApplication::HelloApplication()
+    : BApplication("application/x-vnd.Be-HLWD")
+{
+    HelloWindow  *aWindow;
+    HelloView    *aView;
+    BRect         aRect;
+Here you see that the constructor for the application-defined HelloApplication
+class declares variables of two different application-defined classes: HelloWindow
+and HelloView. After renaming the HelloWorld.cpp file to MyHelloWorld.cpp, the
+changes to the above snippet would turn it into code that looks like this:
+MyHelloApplication::MyHelloApplication()
+    : BApplication("application/x-vnd.dps-myworld")
+{
+    MyHelloWindow  *aWindow;
+    MyHelloView    *aView;
+    BRect           aRect;
+
+Setting Up a New BeIDE Project 59
+The astute reader will have noticed that I slipped an extra change in the above
+snippet. If you didn’t spot it, look at the parameter to the BApplication()con-
+structor. Later in this chapter you’ll see that I also use the FileTypes application to
+place this same signature in the project’s resource file.
+A quicker way to make the changes
+You may have found all this talk about manually editing header files and source
+code files a little disconcerting. Before your level of frustration rises too high, it’s
+time for me to make a confession. There is a shortcut to poring over page after
+page of code to track down occurrences of class names that need to be changed—
+a shortcut I didn’t mention at the onset of the “Preliminary Code Changes” sec-
+tion. The BeIDE has a search and replace utility that makes finding and replacing
+names (such as constants and class names) a snap.
+Before discussing how to quickly make global changes to all of the files in a
+project, I’ll answer the one question that’s on your mind: Why did I bother with
+the drawn-out explanation of exactly what changes to make if everything could be
+done with a few mouse clicks? I went laboriously through all the changes so that
+you’d know what you’re changing and why.
+Now, here’s a revised method for changing the names of constants, files, and
+classes that appear in the header files and source code files of a project:
+1. Choose Open from the BeIDE main menu in the dock and open a header file.
+2. Choose Find from the Search menu of the opened header file.
+3. Set up the Find window to search the project’s source code files and header
+files.
+4. Enter a name to change in the Find box and the name to replace it with in the
+Replace box of the Find window.
+5. Click on the Find button in the Find window.
+6. After verifying that the found text should indeed be replaced, click on the
+Replace & Find button in the Find window.
+7. Repeat Step 6 until all occurrences of the name have been found and
+changed.
+8. Repeat Steps 4 though 8 for each name to be changed.
+You can speed things up by using the Replace All button once in place of the
+Replace & Find button several times. However, it’s safer to use the Replace & Find
+button so that you can take a quick look at each name the BeIDE is changing.
+If you want to perform a multiple-file search, the file icon located on the left side
+of the Find window must be displaying two files and the Find window must be
+
+60 Chapter 2: BeIDE Projects
+expanded as shown in Figure 2-12. If the file icon is displaying a single file, click
+on the icon (it toggles between one and two files). If the Find window isn’t
+expanded (the Multi-File Search section won’t be visible), click on the small blue
+arrow located to the left of the file icon (the arrow expands and collapses the Find
+window).
+With the Find window set for multiple-file searching, specify which files are to be
+included in a search. Check the Sources checkbox to designate that all of the
+source code files listed in the project window are to be searched. To specify that
+the header files also be included in the search, you’ll be tempted to check the
+Project Headers checkbox. At this point, however, the BeIDE doesn’t know that
+the project source code files will be including the renamed header files—so it
+won’t know to add the desired files to the Multi-File Search list. Instead, click on
+the Others button. In the Select a File to Search window that appears, Shift-click
+on the names of each of the renamed header files. That is, hold down the Shift
+key and successively click the mouse button while the cursor is over each header
+filename in the window’s list of files. Click the Add button, then the Done button.
+To quickly change a name, enter the name to change in the Find box, enter the
+new name in the Replace box, and click the Replace All button. The BeIDE will
+search all the project files for the name to find and replace each occurrence with
+the new name. For my MyHelloWorld project I began by searching for the con-
+stant HELLO_VIEW_Hand replacing it with the new constant MY_HELLO_VIEW_H.
+Figure 2-12. The BeIDE Find window set up to search all of a project’s files
+
+
+Setting Up a New BeIDE Project 61
+You can see in Figure 2-12 that the Find window is set up to perform that act.
+When done (it will only take a moment), enter another name and another new
+name in the Find and Replace boxes and again click on the Replace All button.
+Repeat these steps until all of the necessary changes have been made.
+A click on the Replace All button quickly searches all of the files in a project and
+replaces all hits with new text. That makes the BeIDE Find facility a very power-
+ful utility— too powerful if you aren’t sure what you’re changing. Hence my rea-
+soning for describing this technique after the discussion on just what needs to be
+changed in the files of a project. Now, if you make a mistake that results in an
+error when you compile the project’s code, you’ll know where to look and what
+to look for to remedy the errors.
+Testing the changes
+After making all the changes to a project, compile the code by choosing Make
+from the Project menu in the project window’s menubar. This menu item com-
+piles all touched files and then builds a new version of the application. A touched
+file is one that has been edited since the last time the file was compiled. Before
+moving on to the “real” code changes—the possibly extensive changes and addi-
+tions you’ll be making to implement your program’s functionality—you’ll want to
+verify that the “cosmetic” changes you’ve just made didn’t introduce any errors.
+Editing the Resource File
+You’ll want to give your application a unique signature and its own icon. The
+‘APPI’ and ‘ICON’ resources are both located in the project’s resource file, so the
+FileTypes application is involved in both these acts.
+Changing the signature
+To edit the signature to be merged with the application built from the new project,
+double-click on project’s resource file. This launches the FileTypes application and
+opens a window that holds ‘APPI’ information (refer back to Figure 2-8 for an
+example). To complete Step 12 of the new project setup process, modify the
+‘APPI’ information as needed. Most likely this will involve nothing more than
+entering a new, unique signature to be assigned to the application that makes use
+of the resource file. For the MyHelloWorld project, I changed the signature in the
+MyHelloWorld.rsrc file to application/x-vnd.dps-myworld.
+After changing the signature, you can choose Save from the File menu of the File-
+Types window to save the change—but don’t close the window just yet.
+
+62 Chapter 2: BeIDE Projects
+Changing the icon
+To modify the icon housed in the resource file, double-click on the icon box
+located in the upper right corner of the Application Type window. Then draw
+away. That, in brief, is the rest of Step 12.
+The Tracker—the software that allows you to work with files and launch applica-
+tions in the BeOS—displays icons in one of two sizes: 32 pixels by 32 pixels or 16
+pixels by 16 pixels. The larger size is the more commonly used, but you’ve seen
+the smaller size on occasion. For example, the active application displays its
+smaller icon in the area you click on to reveal the items in the main menu. For
+each icon resource, you’ll draw both the larger and smaller variants. At the top
+right of the window back in Figure 2-9, you’ll see the editing area for both vari-
+ants of the icon in the HelloWorld.rsrc file. Clicking on either icon displays an
+enlarged, editable view of that icon in the editing area.
+In the top right area of the window, you’ll see a total of four actual-size icons. You
+can refer to these views to see how the 32-by-32 version and the 16-by-16 version
+will look on the desktop. There are two views of each sized icon to demonstrate
+how each looks normally and when selected (a selected icon has extra shading
+added by the BeOS).
+You’ll treat the large and small versions of an icon separately—editing one ver-
+sion has no effect on the other version. IconWorld will assign the larger version a
+resource type of ‘ICON’ and the smaller version a resource type of ‘MICN’ (for
+“mini-icon”). Because each icon has both a large and small version, IconWorld will
+save the two versions of the icon as a single unit.
+You’ll of course want to replace the original icon with one of your own creation.
+To do that, use the drawing tools and color palette to erase the old icon and draw
+a new one. Creating an icon in FileTypes is a lot like creating a small picture in a
+paint program, so you’re on familiar ground here. If you aren’t artistically inclined,
+at least draw a simple icon that distinguishes your program from the other pro-
+gram icons on your desktop. When done, click on the smaller editing area and
+then draw a smaller version of the icon. That’s what I did for the MyHelloWorld
+example I’m working on. I show off my creative abilities back in Figure 2-9.
+If you’re developing a program that will be distributed to others (rather than one
+that will be for your personal use only), you can find or hire someone else to
+draw a 32-pixel-by-32-pixel and a 16-pixel-by-16-pixel picture for you at a later
+time.
+When you’re done with the new icon, choose Save from the File menu of the
+Icon-O-Matic window, then close the Icon-O-Matic window. Now choose Save
+
+Setting Up a New BeIDE Project 63
+from the File menu of the FileTypes window. Close the FileTypes window. This
+completes Step 12.
+Setting Project Preferences
+Besides keeping track of the files that hold what will become a program’s execut-
+able code, a project also keeps track of a variety of project settings. The font in
+which source code is displayed and the types of compilation errors to be dis-
+played are just two examples of project settings. There’s a good chance that most
+of the copied project’s settings will be fine just as they are. You will, however,
+want to make one quick change. Step 13 specifies that you need to set the name
+of the application about to be built—you do that in the Settings window.
+To display the project Settings window, choose Settings from the Window menu in
+the project file. On the left side of the window that appears is a list that holds a
+variety of settings categories. Click on the xxx Project item under the Project head-
+ing in this list (where xxx specifies the target, such as PPC for PowerPC). The Set-
+tings window responds by displaying several project-related items on the right side
+of the window.
+From the displayed items you’ll set the name that will be assigned to the applica-
+tion that gets built from the project. The MyHelloWorld project is used to build a
+program that gets the name MyHelloWorld. Note that while the file type may look
+like a program signature (they’re both MIME strings), the two aren’t the same. The
+file type specifies the general type of file being created, such as a Be application.
+The file signature (assigned in the FileTypes window, as discussed earlier) gives an
+application a unique signature that differentiates the file from all other applica-
+tions.
+After changing the information in the File Name field, click the Save button. This is
+the only setting change you need to make, though you’re of course free to explore
+the Settings window by clicking on any of the other setting topics in the list.
+Testing the Changes
+After making all your changes, you’ll want to test things out—that’s the last step in
+my list of how to create a new project. Choose Run from the Project menu in the
+project window’s menubar. This will cause the BeIDE to:
+1. Compile any files that have been touched (altered) since the last build.
+2. Link the compiled code to build an application.
+3. Merge resources from the resource file with the built application.
+4. Run the application.
+
+64 Chapter 2: BeIDE Projects
+To verify that your changes to the resource file were noted by the BeIDE, return to
+the desktop and look in your project folder. There you should find your new
+application, complete with its own icon. Figure 2-13 shows the MyHelloWorld
+folder as it looks after my test build of a PowerPC version of the program.
+The MyHelloWorld folder in Figure 2-13 shows one folder and two files that I had
+no hand in creating. The (Objects) folder holds, obviously enough, the object code
+that the BeIDE generated when compiling the project’s source code. The .xMAP
+and .xSYM files were generated by the BeIDE during the building of the project’s
+application. The files in the (Objects) folder and the .xMAP and .xSYM files aren’t
+directly of use to you—they’re used by the BeIDE during linking and debugging. If
+I were working on a PC and did a build of an Intel version of the MyHelloWorld
+program, my project folder would look a little different. There’d be no .xMAP or
+.xSYM files, as these are PowerPC-only. Instead, the information in these files
+(namely the symbol table and the debugging information for the application)
+would be contained in the ELF binary itself. There might also be a number of .d
+files, which are temporary dependency files the compilers create (and which may
+be better disposed of in a future release of the BeOS).
+Figure 2-13. The MyHelloWorld project folder after building an application
+
+
+HelloWorld Source Code 65
+What’s Next?
+After reading this section you know how to create a project that’s ready for your
+own use. Now you need to make the source code changes and additions that will
+cut the ties from the original project on which you’re basing your new program.
+So you need to know a lot more about writing BeOS code. The next section starts
+you in that direction, and the remainder of this book takes you the rest of the way.
+HelloWorld Source Code
+In the previous section, you saw that a new BeIDE project is usually based on an
+existing project. Once you have a mastery of BeOS programming, you’ll be able to
+look at existing projects and recognize which one or ones result in a program that
+bears some similarity to the program you intend to develop. Until that time, it
+makes sense to use a small project such as the HelloWorld project as your starting
+point. If you follow my advice and do that, your new project will hold the
+HelloWorld source code. You got a glimpse of some of that code earlier in this
+chapter. Because you’ll be modifying the HelloWorld source code, you’ll find it
+beneficial to have a good understanding of that code. This section provides you
+with that.
+The HelloWorld/SimpleApp/MyHelloWorld
+Connection
+The HelloWorld project defines three classes: HelloView, HelloWindow, and
+HelloApplication. Two of these classes, HelloWindow and Hello-
+Application, bear a strong resemblance to the SimpleWindowand Simple-
+Application classes from the SimpleApp example that was introduced in
+Chapter 1. Actually, the opposite is true—the SimpleAppclasses are based on the
+HelloWorld classes.
+To create the SimpleApp project, I started with the HelloWorld project. I then fol-
+lowed this chapter’s steps for renaming the project files and renaming the applica-
+tion-defined classes. If you think that my following a Chapter 2 process while writ-
+ing Chapter 1 was a good trick, just wait—there’s more! I then wrote SimpleApp
+such that it became a simplified version of the HelloWorld program. Not many
+books can lay claim to simplifying what is traditionally the most basic program that
+can be written for an operating system.
+In order to keep this book’s first example small and simple, I deleted the Hello-
+View.cpp and HelloView.h files and removed any references to the class that was
+defined and implemented in those two files—the HelloViewclass. I also stripped
+out the #ifndef and #define preprocessor directives to further simplify things.
+
+66 Chapter 2: BeIDE Projects
+Now that the relationship between the Chapter 1 SimpleApp example project
+and the Be-supplied HelloWorld project has been established, where does the
+MyHelloWorld project fit in? As you saw in this chapter, the MyHelloWorld project
+also came about by duplicating the HelloWorld project. I renamed the files and the
+application-defined classes, but I left all the other code intact. Building an applica-
+tion from the MyHelloWorld project results in a program indistinguishable from
+the application that gets built from the HelloWorld project (except for the look of
+the application’s icon).
+In this section I describe the code that makes up the HelloWorld project. At the
+end of this section I make a few minor changes to this code. When I do that I’ll
+use the MyHelloWorld project so that I can leave the original HelloWorld project
+untouched, and so that I can justify the time I invested in making the MyHel-
+loWorld project!
+HelloWorld View Class
+A view is a rectangular area in which drawing takes place. Drawing is an impor-
+tant part of almost all Be programs, so views are important too. Views are dis-
+cussed at length in Chapter 4, Windows, Views, and Messages, so I’ll spare you the
+details here. I will, however, provide a summary of views so that you aren’t in the
+dark until you reach the fourth chapter.
+A view can encompass the entire content area of a window—but it doesn’t have
+to. That is, a window’s content area can consist of a single view or it can be
+divided into two or more views. Note that a view has no visible frame, so when I
+say that a window can be divided, I’m referring to a conceptual division—the user
+won’t be aware of the areas occupied by views in a window.
+A view serves as an independent graphics environment, or state. A view has its
+own coordinate grid so that the location at which something is drawn in the view
+can be kept independent of other views that may be present in a window. A view
+has a large set of drawing characteristics associated with it, and keeps track of the
+current state of these characteristics. The font used to draw text in the view and
+the width of lines that are to be drawn in the view are two examples of these
+characteristics.
+The information about a single view is stored in a view object, which is of the
+BViewclass (or a class derived from the BViewclass). The BViewclass is a part of
+the Interface Kit.
+When a window is created, it doesn’t initially have any views attached to (associ-
+ated with) it. Because drawing always takes place in a view and never directly in a
+window, any program that draws must define a class derived from the BView
+
+HelloWorld Source Code 67
+class. When the program creates a new window object, it will also create a new
+BView-derived object and attach this view object to the Window object.
+A class derived from the BViewclass will typically define a minimum of three vir-
+tual member functions. That is, such a class will override at least three of the many
+BView member functions. These functions are the constructor function, the
+AttachedToWindow()function, and the Draw()function. The HelloViewclass
+defined in the HelloWorld project does just that:
+class HelloView : public BView {
+public:
+               HelloView(BRect frame, char *name);
+virtual  void  AttachedToWindow();
+virtual  void  Draw(BRect updateRect);
+};
+These member functions, along with several other BView member functions, are
+discussed at length in Chapter 4. Here I’ll provide only a brief overview of each.
+The purpose of the constructor is to establish the size of the view and, optionally,
+provide a name for the view ( NULL can be passed as the second parameter). If a
+window is to have only a single view, then the first parameter to the constructor is
+a rectangle of the same size as the content area of the window the view is to be
+attached to.
+The HelloViewconstructor does nothing more than invoke the BViewclass con-
+structor. When a HelloViewview object is created by the HelloWorld program,
+the program passes to the HelloViewconstructor the size and name the view is to
+have. The HelloViewconstructor will in turn pass that information on to the
+BViewconstructor (as the rect and name parameters). The third BViewconstruc-
+tor parameter describes how the view is to be resized as its window is resized.
+The Be constant B_FOLLOW_ALLsets the view to be resized in tandem with any
+resizing of the window. The final BView constructor parameter determines the
+types of notifications the view is to receive from the system. The Be constant
+B_WILL_DRAWmeans that the view should be notified when the visible portions of
+the view change (and an update is thus necessary).
+HelloView::HelloView(BRect rect, char *name)
+    : BView(rect, name, B_FOLLOW_ALL, B_WILL_DRAW)
+{
+}
+You might not be able to fully initialize a view object when creating it—some
+characteristics of the view may be dependent on the window the view becomes
+attached to. Thus the existence of the BView member function
+AttachedToView(). This function is automatically called by the operating system
+when the view is attached to a window (covered ahead in the discussion of the
+
+68 Chapter 2: BeIDE Projects
+HelloWorld’s application class). The characteristics of the view should be included
+in the implementation of AttachedToWindow().
+The HelloView version of AttachedToWindow()sets the font and font size that
+are to be used for any text drawing that takes place within the view:
+void HelloView::AttachedToWindow()
+{
+    SetFont(be_bold_font);
+    SetFontSize(24);
+}
+The SetFont() and SetFontSize()functions are member functions of the
+BView class. The function names make the purpose of each obvious, so I won’t
+offer any more information here. You will, however, find plenty of information on
+drawing strings in Chapter 5, Drawing.
+In Chapter 1 you saw member functions invoked via an object—as in the
+SimpleWindow object invoking the BWindow member function Show():
+aWindow->Show();
+In the AttachedToWindow()member function you see that the BView member
+functions SetFont()and SetFontSize()are invoked without the use of an
+object.
+As a C++ programmer, it should be obvious how a member func-
+tion can be invoked in this way. If it isn’t, read on. The implementa-
+tion of a member function results in a routine that can be invoked
+by any object of the type of class to which the function belongs.
+Therefore, the code that makes up a member function can operate
+on any number of objects. When a member function includes code
+that invokes a different member function (as the HelloViewmem-
+ber function AttachedToWindow()invokes the BView member
+function SetFont()), it is implicit that the invocation is acting on
+the current object. So no object prefaces the invocation.
+The BViewclass includes a Draw()member function that automatically gets called
+when the window a view is attached to needs updating. The system keeps track of
+the views that are attached to a window, and if more than one view object is
+attached to a window, the Draw()function for each view object is invoked. The
+Draw()function should implement the code that does the actual drawing in the
+view.
+The HelloView version of Draw()simply establishes the starting position for draw-
+ing a string of text and then draws that string.
+
+HelloWorld Source Code 69
+void HelloView::Draw(BRect updateRect)
+{
+    MovePenTo(BPoint(10, 30));
+    DrawString("Hello, World!");
+}
+HelloWorld Window Class
+In Chapter 1, you received an overview of the BWindowclass and classes derived
+from it, so I won’t go on at length about those topics here. In fact, I’ll barely dis-
+cuss the HelloWindowclass at all. If you need a refresher on defining a class
+derived from BWindow, refer back to the SimpleApp example in Chapter 1—there
+you’ll find that the SimpleWindowclass consists of the same two member func-
+tions (a constructor and the QuitRequested()function) as the HelloWindow
+class.
+class HelloWindow : public BWindow {
+public:
+               HelloWindow(BRect frame);
+virtual  bool  QuitRequested();
+};
+In the SimpleApp project, the only thing the SimpleWindowclass constructor does
+is invoke the BWindowclass constructor. That’s true for the HelloWindowclass
+constructor as well. The first parameter to the BWindowconstructor, which comes
+from the HelloWindowconstructor, sets the size of the window. The second
+parameter is a string that is used as the window’s title. The SimpleWindowclass
+passes the string “A Simple Window,” while the HelloWindowclass passes the
+more appropriate string “Hello.” The third parameter is a Be-defined constant that
+specifies the type of window to be displayed. The final parameter defines the
+behavior of the window. The SimpleWindowclass passes the constant B_NOT_
+RESIZABLE, while the HelloWindowclass passes the result of combining two con-
+stants, B_NOT_RESIZABLE and B_NOT_ZOOMABLE.
+HelloWindow::HelloWindow(BRect frame)
+    : BWindow(frame, "Hello", B_TITLED_WINDOW, B_NOT_RESIZABLE |
+                              B_NOT_ZOOMABLE)
+{
+}
+You’ve already seen the code that makes up the QuitRequested()function. In
+the Chapter 1 SimpleApp project, I left this routine from the HelloWorld project
+unchanged. Recall from that chapter that the purpose of overriding this BWindow
+member function is to cause a mouse click on a window’s close button to not only
+close the window, but to quit the application as well:
+bool HelloWindow::QuitRequested()
+{
+
+70 Chapter 2: BeIDE Projects
+    be_app->PostMessage(B_QUIT_REQUESTED);
+    return(true);
+}
+HelloWorld Application Class
+All programs must define a class derived from the BApplicationclass. Like the
+SimpleApp’s SimpleApplicationclass, the HelloWorld’s HelloApplication
+class consists of just a constructor:
+class HelloApplication : public BApplication {
+public:
+           HelloApplication();
+};
+For the implementation of the SimpleApplicationconstructor, I started with the
+HelloApplicationconstructor, then stripped out the view-related code. As you
+look at the HelloApplicationconstructor you should recognize much of the
+code:
+HelloWindow  *aWindow;
+...
+BRect         aRect;
+aRect.Set(20, 30, 180, 70);
+aWindow = new HelloWindow(aRect);
+...
+...
+aWindow->Show();
+This snippet begins by declaring a window variable and a rectangle variable. Next,
+the boundaries of the rectangle that sets the window’s size are established. Then a
+new window object (an object of the HelloWindowclass) is created. Finally, the
+BWindowmember function Show() is invoked to display the new window. The
+code I omitted from the above snippet is the HelloApplicationconstructor’s
+view-related code:
+HelloView    *aView;
+aRect.OffsetTo(B_ORIGIN);
+aView = new HelloView(aRect, "HelloView");
+aWindow->AddChild(aView);
+In the above snippet, the size of the rectangle object isn’t changed, but its existing
+boundaries (as set by the prior call to the BRectmember function Set()) are off-
+set. The one parameter in the BRect member function OffsetTo()is the loca-
+tion to move the upper-left corner of the rectangle to. The constant B_ORIGINtells
+OffsetTo()to shift the rectangle aRect from its present location such that its
+
+HelloWorld Source Code 71
+upper-left corner aligns with the origin—the point (0, 0). This has the effect of
+changing the aRect coordinates from (20, 30, 180, 70) to (0, 0, 160, 40). The
+details of the coordinate system, by the way, are presented in Chapter 4. Next, a
+new HelloViewobject is created. The HelloViewconstructor sets the size of the
+view to aRect and the name of the view to “HelloView.” Finally, the window
+object aWindowinvokes the BWindowmember function AddChild()to attach the
+view to itself. Recall that in order for a view to be of use, it must be attached to a
+window; in order for drawing to take place in a window, it must have a view
+attached to it.
+You’ve seen the implementation of the HelloApplicationconstructor in bits and
+pieces. Here it is in its entirety:
+HelloApplication::HelloApplication()
+    : BApplication("application/x-vnd.Be-HLWD")
+{
+    HelloWindow  *aWindow;
+    HelloView    *aView;
+    BRect         aRect;
+    aRect.Set(20, 30, 180, 70);
+    aWindow = new HelloWindow(aRect);
+    aRect.OffsetTo(B_ORIGIN);
+    aView = new HelloView(aRect, "HelloView");
+    aWindow->AddChild(aView);
+    aWindow->Show();
+}
+You may have noticed that after the window object is created, no drawing appears
+to take place. Yet you know that the string “Hello, World!” gets drawn in the win-
+dow. Recall that the updating of a window has the effect of calling the Draw()
+member function of any views attached to that window. When aWindowinvokes
+the BWindow Show()member function, the window is displayed. That forces an
+update to occur. That update, in turn, causes the aView object’s Draw()method
+to be invoked. Look back at the implementation of the HelloViewclass Draw()
+member function to see that it is indeed this routine that draws the string.
+HelloWorld main() Function
+When I wrote the main()routine for SimpleApp, the only changes I made to the
+HelloWorld version of main()involved changing HelloApplicationreferences
+to SimpleApplicationreferences. For the details of what main() does, refer
+back to Chapter 1. I’ll summarize by saying that main()performs the mandatory
+
+72 Chapter 2: BeIDE Projects
+creation of a new application object, then starts the program running by invoking
+the BApplication member function Run():
+int  main()
+{
+    HelloApplication  myApplication;
+    myApplication.Run();
+    return(0);
+}
+Altering the Source Code
+To implement the functionality required of your own program, you’ll no doubt
+make some changes and substantial additions to the code of whatever project you
+start with. After reading a few more chapters, you’ll know the details of how to
+draw just about anything to a window and how to add controls (such as buttons)
+to a window. At that point you’ll be ready to make large-scale revisions of exist-
+ing code. While at this early point in the book you may not feel ready to make
+sweeping changes to Be code, you should be ready to make at least minor revi-
+sions. In this section, I’ll do that to the HelloWorld project.
+I’ll leave the HelloWorld project intact and instead make the changes to a dupli-
+cate project—a project I’ve name MyHelloWorld. If you haven’t followed the steps
+in this chapter’s “Setting Up a New BeIDE Project” section, do so now. Besides
+getting experience at starting a new project, you’ll bring yourself to the point
+where you can follow along with the code changes I’m about to make. Here they
+are:
+• Change the text that is drawn in the window
+• Change the window’s title
+• Add a zoom button to the window’s tab
+• Change the size of the window
+At the top of Figure 2-14, you see the original window from the HelloWorld pro-
+gram, while at the bottom of the figure you see the new window from the MyHel-
+loWorld program.
+The drawing that takes place in the MyHelloWorld window is done by the
+MyHelloView Draw()member function. A call to the BView member function
+DrawString()writes the string “Hello, World!” to the window. Changing this one
+DrawString()parameter to “Hello, My World!” will cause this new string to be
+drawn to the window instead. The affected line is in the MyHelloView.cpp file, and
+is shown here in bold type:
+
+HelloWorld Source Code 73
+void MyHelloView::Draw(BRect updateRect)
+{
+    MovePenTo(BPoint(10, 30));
+    DrawString("Hello, My World!");
+}
+The change to the window’s title and the addition of a zoom button to the win-
+dow are both taken care of in the MyHelloWindowclass constructor, so I’ll open
+the MyHelloWindow.cpp file. MyHelloWindow()invokes the BWindowconstruc-
+tor. The second parameter in the BWindowconstructor defines the window’s title,
+so changing that parameter from “Hello” to “My Hello” handles the window title
+change. The last parameter in BWindow()is a Be-defined constant, or combina-
+tion of Be-defined constants, that defines the behavior of the window. In the origi-
+nal HelloWindowclass, this parameter was a combination of the constants that
+specified that the window be drawn without a resize knob and without a zoom
+button (B_NOT_RESIZABLE | B_NOT_ZOOMABLE). I’ll change this parameter to the
+one constant B_NOT_RESIZABLE so that a window created from the
+MyHelloWindowclass will be without a resize knob, but will now have a zoom
+button:
+MyHelloWindow::MyHelloWindow(BRect frame)
+    : BWindow(frame, "My Hello", B_TITLED_WINDOW, B_NOT_RESIZABLE)
+{
+}
+The final change I’ll make to the code that came from the HelloWorld project will
+change the size of the program’s window. The MyHelloApplicationconstructor
+uses a BRectobject to define the size of the window, so I’ll go to this function in
+the MyHelloWorld.cpp file to make the change. In the following version of
+MyHelloApplication(), I’ve changed the coordinates of the rectangle object
+aRect from (20, 30, 180, 70) to (20, 30, 230, 100) in order to set up a window
+that’s a little larger than the one used in the original HelloWorld program.
+Figure 2-14. The window from HelloWindow (top) and MyHelloWindow (bottom)
+
+
+74 Chapter 2: BeIDE Projects
+MyHelloApplication::MyHelloApplication()
+    : BApplication("application/x-vnd.dps-myworld")
+{
+    MyHelloWindow  *aWindow;
+    MyHelloView    *aView;
+    BRect           aRect;
+    aRect.Set(20, 20, 240, 90);
+    aWindow = new MyHelloWindow(aRect);
+    aRect.OffsetTo(B_ORIGIN);
+    aView = new MyHelloView(aRect, "MyHelloView");
+    aWindow->AddChild(aView);
+    aWindow->Show();
+}
+I can compile all the MyHelloWorld project files, build a new version of the
+MyHelloWorld program, and run that program by choosing Run from the Project
+menu in the menubar of the MyHelloWorld project window. If I’ve done every-
+thing correctly, the program will display a window that looks like the one at the
+bottom of Figure 2-14.
+
+75
+Chapter 3
+In this chapter:
+• Overview of the BeOS
+Software Kits
+• Software Kit Class
+Descriptions
+• Chapter Example:
+Adding an Alert to
+MyHelloWorld
+3
+3. BeOS API Overview
+Writing a Be application generally involves starting with an existing base of code
+and then using several of the Be software kit classes to add new functionality to
+the base code. In Chapter 2, BeIDE Projects, you saw how to ready an existing
+project to serve as the base for your new project. In this chapter, you’ll see how to
+select and use a software kit class to modify your new project.
+This chapter begins with an overview of the Be software kits. Knowing the pur-
+pose of each kit will help you quickly hone in on which kits will be of the most
+use in your project. After finding a kit of interest, you need to locate a useful class
+within that kit. To do that, you’ll use the Be Book—the electronic document by
+Be, Inc. that serves as the BeOS class reference. Once you’ve found a class of pos-
+sible interest, you’ll read through the Be Book’s class description to find out all
+about the class: an overview of how objects are created, what they’re useful for,
+and so forth. In this chapter, you’ll see how to get the most out of the class
+descriptions in the Be Book.
+The Be Book is essential documentation for any Be programmer—but it isn’t a
+tutorial. In this chapter, I close by looking at how the Be Book describes one class
+(the BAlertclass), and then go on to integrate an object of this class type in a
+simple program. The remaining chapters in this book provide example snippets
+and programs that “bring to life” the class descriptions found in the Be Book.
+Overview of the BeOS Software Kits
+Chapter 1, BeOS Programming Overview, provided a very brief description of each
+kit—only a sentence or two. Because you hadn’t been exposed to any of the
+details of BeOS programming at that point, out of necessity those descriptions
+didn’t give examples of kit classes and member functions. Now that you’ve
+
+76 Chapter 3: BeOS API Overview
+studied the fundamentals of Be programming and have looked at some example
+source code, it’s time to rewrite the kit summaries, with an emphasis on the key
+classes and a few important member functions.
+The focus of this book is on the first three kits described below: the Application
+Kit, the Interface Kit, and the Storage Kit. Don’t feel as if you’re being short-
+changed, though—these kits provide dozens of classes that allow you to create
+full-featured applications complete with windows, graphics, editable text, and all
+manner of controls.
+While each of the software kits isn’t represented by its own chapter in this book,
+all are at least briefly described below for the sake of completeness. A couple of
+the these kits can’t be covered, as they aren’t complete as of this writing. Be pro-
+vides information on kit updates at the developer web page at http://www.be.com/
+developers, so you’ll want to check that site occasionally. Other kits are complete,
+but their specialized functionality makes detailed descriptions out of scope for this
+book. Note that while some kits don’t have a chapter devoted to them, some of
+their classes appear throughout the book. See the description of the Support Kit
+below for a specific example concerning the BLocker class.
+Application Kit
+The classes of the Application Kit communicate with the Application Server and
+directly with the kernel. Every program must create a single instance of a class
+derived from the Application Kit class BApplication—the HelloWorld program
+provides an example of how this is typically done. This BApplicationobject is
+necessary for a couple of reasons. The application object:
+• Makes a connection to the Application Server. This connection is vital if the
+program is to display and maintain windows, which of course most Be pro-
+grams do.
+• Runs the program’s main message loop. This loop provides a messaging sys-
+tem that keeps the program aware of events (such as a press of a keyboard
+key by the user).
+An important member function of the BApplicationclass is Run(). The main()
+function of every Be program must create an instance of the BApplicationclass
+and then invoke Run() to start the program.
+The BApplicationclass is derived from two other Application Kit classes—
+BLooperand BHandler.A BLooperobject creates and then controls a message
+loop, a thread that exits to transfer messages to objects. A BHandlerobject is one
+that is capable of receiving a message from a BLooperobject—it handles a mes-
+sage received from a message loop. Because a BApplicationobject is also a
+
+Overview of the BeOS Software Kits 77
+BLooperand BHandlerobject, it acts as both a message loop and a message han-
+dler. Refer to Figure 1-2 in Chapter 1 for a look at the Application Kit class hierar-
+chy that illustrates the relationship between the BApplicationand BLooperand
+BHandler classes.
+Interface Kit
+With over two dozen classes, the Interface Kit is the largest of the Be software kits.
+It’s also the one you’ll make the most use of—as will this book. The chapters from
+Chapter 4, Windows, Views, and Messages , through Chapter 8, Text, deal almost
+exclusively with this kit. In Chapter 1 you saw that a window is an object derived
+from an Interface Kit class—the BWindowclass. In Chapter 2 you were introduced
+to the concept that all drawing in a window is done via an object derived from
+another Interface Kit class—the BView class (much more on this important topic
+appears in Chapter 4 and Chapter 5, Drawing). In subsequent chapters you’ll learn
+that controls (such as buttons and checkboxes), strings, and menus are also types
+of views (objects of classes that are derived from the BView class). Because all
+drawing takes place in a view, and because all of the aforementioned items are
+drawn, this should seem reasonable. It should also shed more light on the class
+hierarchy of the Interface Kit, as shown in Figure 1-4 back in Chapter 1.
+Like a BApplicationobject (see the Application Kit above), a BWindowobject is
+derived from both the BLooperand BHandlerclasses, so it is both an organizer
+of messages in a message loop and a handler of messages. When an event is
+directed at a window (such as a mouse button click while the cursor is over a win-
+dow’s close button), the system transfers a message to the window object’s thread.
+Because the window is a message handler as well as a message loop, it may also
+be able to handle the message.
+A window contains one or more views—objects of the BView class or one of its
+many derived classes. Often a window has one view that is the same size as the
+content area of the window (or larger than the content area of the window if it
+includes scrollbars). This view then serves as a holder of other views. These
+smaller, nested, views can consist of areas of the window that are to act indepen-
+dently of one another. Any one of these smaller views may also be used to dis-
+play a single interface item, such as a button or a scrollbar. Because the contents
+of a view are automatically redrawn when a window is updated, it makes sense
+that each interface item exists in its own view. Some of the Interface Kit control
+classes that are derived from the BView class (and which you’ll work with in
+Chapter 6, Controls and Messages ) include BCheckBox, BRadioButton, and
+BPictureButton.
+
+78 Chapter 3: BeOS API Overview
+Storage Kit
+All operating systems provide file system capabilities—without them, data couldn’t
+be saved to disk. The Storage Kit defines classes that allow your program to store
+data to files, search through stored data, or both.
+The BNode class is used to create an object that represents data on a disk. The
+BFileclass is a subclass of BNode.A BFileobject represents a file on disk. Creat-
+ing a BFileobject opens a file, while deleting the same object closes the file. A
+BFile object is the mechanism for reading and writing a file. The BDirectory
+class is another subclass of BNode.A BDirectoryobject represents a folder, and
+allows a program to walk through the folder’s contents and create new files in the
+folder.
+The concept of file attributes, associating extra information with a given file,
+allows for powerful file indexing and searching. The BQueryclass is used to per-
+form searches.
+Support Kit
+The Support Kit, as its name suggests, supports the other kits. This kit defines
+some datatypes, constants, and a few classes. While the nature of the classes of the
+Support Kit makes a chapter devoted to it impractical, you will nonetheless
+encounter a couple of this kit’s classes throughout this book.
+The BArchivableclass defines a basic interface for storing an object in a mes-
+sage and instantiating a copy of that object from the message.
+The BLockerclass is used to limit program access to certain sections of code.
+Because the BeOS is multithreaded, there is the possibility that a program will
+attempt to access data from two different threads simultaneously. If both threads
+attempt to write to the same location, results will be unpredictable. To avoid this,
+programs use the Lock()and Unlock()member functions to protect code. Calls
+to these functions are necessary only under certain circumstances. Throughout this
+book mention of the use of Lock() and Unlock() will appear where required.
+Media Kit
+The Media Kit is designed to enable programs to work with audio and video data
+in real time—the kit classes provide a means for processing audio and video data.
+The Media Kit relies on nodes—specialized objects that perform media-related
+tasks. A node is always indirectly derived from the BMediaNodeclass, and there
+are several basic node types. Examples are producer and consumer nodes. A pro-
+ducer node sends output to media buffers, which are then received by consumer
+nodes.

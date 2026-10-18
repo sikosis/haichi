@@ -1,0 +1,10 @@
+# Haiku makefile-engine output
+objects.*
+
+# Built executables
+/haichi
+/tests/haichi_layout_tests
+
+# Editor and filesystem metadata
+.DS_Store
+*~

@@ -1,0 +1,26 @@
+NAME = haichi
+TYPE = APP
+APP_MIME_SIG = application/x-vnd.Sikosis-haichi
+
+SRCS = \
+	src/AttrBackend.cpp \
+	src/HaichiEngine.cpp \
+	src/LayoutStore.cpp \
+	src/PositionScaling.cpp \
+	src/main.cpp
+
+RDEFS = resources/haichi.rdef
+LIBS = be
+SYSTEM_INCLUDE_PATHS =
+LOCAL_INCLUDE_PATHS = src
+OPTIMIZE := FULL
+WARNINGS = ALL
+COMPILER_FLAGS = -std=c++11
+
+DEVEL_DIRECTORY := \
+	$(shell findpaths -r "makefile_engine" B_FIND_PATH_DEVELOP_DIRECTORY)
+include $(DEVEL_DIRECTORY)/etc/makefile-engine
+
+.PHONY: check
+check: $(TARGET_DIR)/$(NAME)
+	$(MAKE) -C tests check
