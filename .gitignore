@@ -8,3 +8,6 @@ objects.*
 # Editor and filesystem metadata
 .DS_Store
 *~
+beos_prog_full.txt
+haiku_api.txt
+update-git.sh
