@@ -5,9 +5,9 @@ resource app_flags B_MULTIPLE_LAUNCH;
 resource app_version {
 	major = 0,
 	middle = 0,
-	minor = 6,
+	minor = 7,
 	variety = B_APPV_DEVELOPMENT,
-	internal = 6,
-	short_info = "haichi v0.06",
-	long_info = "haichi Desktop icon placer v0.06"
+	internal = 7,
+	short_info = "haichi v0.07",
+	long_info = "haichi Desktop icon placer v0.07"
 };

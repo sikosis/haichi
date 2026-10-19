@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.07 - 2026-10-19
+
+- Report Tracker's native X and Y values without transposing the axes in the
+  command-line and graphical icon lists.
+
 ## v0.06 - 2026-10-19
 
 - Include the complete Haiku `BWindow` declaration required by the Deskbar

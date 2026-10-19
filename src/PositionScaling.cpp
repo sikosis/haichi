@@ -11,7 +11,7 @@ const float kMaximumTrackerCoordinate = 50000.0f;
 } // namespace
 
 BPoint DisplayPosition(BPoint trackerPosition) {
-	return BPoint(trackerPosition.y, trackerPosition.x);
+	return trackerPosition;
 }
 //---------------------------------------------------------------------------------------------------------------------------------//
 
