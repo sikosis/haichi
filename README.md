@@ -30,6 +30,21 @@ Run the automated checks on Haiku:
 make check
 ```
 
+Prepare release checks and refresh the README screenshot from the real Haiku
+window:
+
+```sh
+make prepare-release
+```
+
+The command leaves haichi open for visual inspection and writes
+`docs/images/haichi.png`. Review and commit that generated image with every
+release.
+
+## Screenshot
+
+![haichi main window](docs/images/haichi.png)
+
 ## Usage
 
 Launch `haichi` without arguments to open the graphical interface and install
@@ -68,4 +83,4 @@ volume and Trash poses are intentionally outside the Phase 1 scope.
   anchors, multi-selection, undo, and layout management UI remain.
 - Phase 3 onward: expanded layout UI and optional placement features remain.
 
-Version: v0.07
+Version: v0.08

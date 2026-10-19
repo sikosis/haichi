@@ -24,6 +24,9 @@ DEVEL_DIRECTORY := \
 	$(shell findpaths -r "makefile_engine" B_FIND_PATH_DEVELOP_DIRECTORY)
 include $(DEVEL_DIRECTORY)/etc/makefile-engine
 
-.PHONY: check
+.PHONY: check prepare-release
 check: $(TARGET_DIR)/$(NAME)
 	$(MAKE) -C tests check
+
+prepare-release:
+	./scripts/prepare-release.sh

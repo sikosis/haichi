@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.08 - 2026-10-19
+
+- Add a Haiku-native release preparation script that runs the checks and
+  refreshes the README screenshot from the real application window.
+- Add the application screenshot to the README at a stable generated path.
+
 ## v0.07 - 2026-10-19
 
 - Report Tracker's native X and Y values without transposing the axes in the

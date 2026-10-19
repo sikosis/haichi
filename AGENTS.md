@@ -30,6 +30,7 @@
 - Run the narrowest relevant test while iterating, then the full applicable suite before completion.
 - Add or update tests for changed behavior, including failure paths and boundary cases. Do not weaken tests just to make them pass.
 - Prefer one repository-owned validation or release script for repeatable workflows. Put applicable builds, tests, screenshots, site generation, packaging, checksums, and uploads behind that entry point instead of performing each step manually; publishing still requires explicit approval.
+- Run `make prepare-release` on Haiku for every release and commit the refreshed `docs/images/haichi.png` screenshot with the release changes.
 - Report commands actually run and any checks that could not be run. Do not claim success without evidence.
 
 ## Coding style
