@@ -18,6 +18,7 @@ DesktopPreview::DesktopPreview()
 	fScreenWidth(1),
 	fScreenHeight(1),
 	fPinPosition(0, 0),
+	fDragOffset(0, 0),
 	fPinVisible(false),
 	fDragging(false) {
 	SetViewUIColor(B_PANEL_BACKGROUND_COLOR);
@@ -51,19 +52,21 @@ void DesktopPreview::Draw(BRect updateRect) {
 		if (!fIcons[index].hasLocation)
 			continue;
 
-		BPoint position = DisplayPosition(fIcons[index].location);
-		if (position.x < 0 || position.x >= fScreenWidth || position.y < 0
-			|| position.y >= fScreenHeight) {
+		BPoint point;
+		if (!IconPoint((int32)index, point))
 			continue;
-		}
 
-		BPoint point(monitor.left + position.x * monitor.Width() / fScreenWidth,
-			monitor.top + position.y * monitor.Height() / fScreenHeight);
-		if ((int32)index == fSelectedIndex)
+		if ((int32)index == fSelectedIndex) {
 			SetHighColor(ui_color(B_KEYBOARD_NAVIGATION_COLOR));
-		else
+			FillRect(BRect(point.x - 7, point.y - 7, point.x + 7,
+				point.y + 7));
+			DrawString(fIcons[index].name.String(),
+				BPoint(point.x + 11, point.y - 9));
+		} else {
 			SetHighColor(ui_color(B_CONTROL_TEXT_COLOR));
-		FillRect(BRect(point.x - 4, point.y - 4, point.x + 4, point.y + 4));
+			FillRect(BRect(point.x - 4, point.y - 4, point.x + 4,
+				point.y + 4));
+		}
 	}
 
 	if (fPinVisible) {
@@ -76,10 +79,31 @@ void DesktopPreview::Draw(BRect updateRect) {
 		StrokeLine(BPoint(point.x, point.y - 11), BPoint(point.x, point.y + 11));
 		SetPenSize(1.0f);
 	}
+
+	SetHighColor(ui_color(B_CONTROL_TEXT_COLOR));
+	DrawString("X increases right", BPoint(monitor.left, monitor.top - 5));
+	DrawString("Y increases down", BPoint(monitor.right - 105,
+		monitor.bottom + 15));
 }
 //---------------------------------------------------------------------------------------------------------------------------------//
 
 void DesktopPreview::MouseDown(BPoint where) {
+	int32 hitIndex = IconAt(where);
+	if (hitIndex >= 0) {
+		fSelectedIndex = hitIndex;
+		BPoint iconPoint;
+		IconPoint(hitIndex, iconPoint);
+		fDragOffset = where - iconPoint;
+		BPoint position = DisplayPosition(fIcons[hitIndex].location);
+		SetPinPosition(position, true);
+
+		BMessage selection(kPreviewIconSelected);
+		selection.AddInt32("index", hitIndex);
+		Window()->PostMessage(&selection);
+	} else {
+		fDragOffset = BPoint(0, 0);
+	}
+
 	if (fSelectedIndex < 0)
 		return;
 
@@ -125,6 +149,47 @@ void DesktopPreview::SetScreenSize(int32 width, int32 height) {
 }
 //---------------------------------------------------------------------------------------------------------------------------------//
 
+int32 DesktopPreview::IconAt(BPoint where) const {
+	BPoint point;
+	if (IconPoint(fSelectedIndex, point)
+		&& BRect(point.x - 10, point.y - 10, point.x + 10,
+			point.y + 10).Contains(where)) {
+		return fSelectedIndex;
+	}
+
+	for (int32 index = (int32)fIcons.size() - 1; index >= 0; index--) {
+		if (index == fSelectedIndex)
+			continue;
+		if (!IconPoint(index, point))
+			continue;
+		if (BRect(point.x - 10, point.y - 10, point.x + 10,
+			point.y + 10).Contains(where)) {
+			return index;
+		}
+	}
+	return -1;
+}
+//---------------------------------------------------------------------------------------------------------------------------------//
+
+bool DesktopPreview::IconPoint(int32 index, BPoint& point) const {
+	if (index < 0 || (size_t)index >= fIcons.size()
+		|| !fIcons[index].hasLocation) {
+		return false;
+	}
+
+	BPoint position = DisplayPosition(fIcons[index].location);
+	if (position.x < 0 || position.x >= fScreenWidth || position.y < 0
+		|| position.y >= fScreenHeight) {
+		return false;
+	}
+
+	BRect monitor = MonitorFrame();
+	point.Set(monitor.left + position.x * monitor.Width() / fScreenWidth,
+		monitor.top + position.y * monitor.Height() / fScreenHeight);
+	return true;
+}
+//---------------------------------------------------------------------------------------------------------------------------------//
+
 BRect DesktopPreview::MonitorFrame() const {
 	BRect available = Bounds();
 	available.InsetBy(18, 18);
@@ -143,6 +208,7 @@ BRect DesktopPreview::MonitorFrame() const {
 
 void DesktopPreview::PickPosition(BPoint where) {
 	BRect monitor = MonitorFrame();
+	where -= fDragOffset;
 	where.x = std::max(monitor.left, std::min(where.x, monitor.right));
 	where.y = std::max(monitor.top, std::min(where.y, monitor.bottom));
 

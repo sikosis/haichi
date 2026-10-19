@@ -51,7 +51,9 @@ Launch `haichi` without arguments to open the graphical interface and install
 the Deskbar item. Select a Desktop icon, then click or drag the pinpointer over
 the monitor preview—or enter X and Y coordinates directly—and choose Apply.
 The preview grid shows the relative placement of every positioned Desktop
-icon. Closing the window hides it; the Deskbar item can reopen it.
+icon. Clicking an icon square selects that exact icon before dragging it, and
+the selected icon's name remains visible above the preview. Closing the window
+hides it; the Deskbar item can reopen it.
 
 The command-line interface remains available:
 
@@ -85,4 +87,4 @@ volume and Trash poses are intentionally outside the Phase 1 scope.
   anchors, multi-selection, undo, and layout management UI remain.
 - Phase 3 onward: expanded layout UI and optional placement features remain.
 
-Version: v0.09
+Version: v0.11

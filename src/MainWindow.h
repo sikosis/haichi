@@ -28,6 +28,7 @@ private:
 	void ApplyPosition();
 	bool ParseCoordinate(BTextControl* control, float& coordinate) const;
 	void RefreshIcons();
+	void SelectPreviewIcon(BMessage* message);
 	void SetPickedPosition(BMessage* message);
 	void SetControlsEnabled(bool enabled);
 	void SetStatus(const char* text);
@@ -39,6 +40,7 @@ private:
 	BTextControl* fYControl;
 	BButton* fApplyButton;
 	BStringView* fStatusView;
+	BStringView* fSelectionView;
 	DesktopPreview* fPreview;
 	std::vector<IconItem> fIcons;
 };

@@ -24,7 +24,7 @@ namespace Haichi {
 
 MainWindow::MainWindow(HaichiEngine* engine)
 	:
-	BWindow(BRect(80, 80, 980, 680), "haichi", B_TITLED_WINDOW,
+	BWindow(BRect(60, 60, 1160, 780), "haichi", B_TITLED_WINDOW,
 		B_AUTO_UPDATE_SIZE_LIMITS),
 	fEngine(engine),
 	fIconList(new BListView("icons", B_SINGLE_SELECTION_LIST)),
@@ -32,23 +32,30 @@ MainWindow::MainWindow(HaichiEngine* engine)
 	fYControl(new BTextControl("y", "Y:", "", NULL)),
 	fApplyButton(new BButton("apply", "Apply", new BMessage(kApplyPosition))),
 	fStatusView(new BStringView("status", "Ready")),
+	fSelectionView(new BStringView("selection", "Selected icon: none")),
 	fPreview(new DesktopPreview()) {
 	fIconList->SetSelectionMessage(new BMessage(kSelectionChanged));
 	BScrollView* iconScroll = new BScrollView("icon scroll", fIconList, 0,
 		false, true);
+	iconScroll->SetExplicitMinSize(BSize(340, 420));
 	BButton* refreshButton = new BButton("refresh", "Refresh",
 		new BMessage(kRefreshIcons));
 	BStringView* previewTitle = new BStringView("preview title",
 		"Desktop position preview");
+	BStringView* iconTitle = new BStringView("icon title", "Desktop icons");
 	BStringView* previewHelp = new BStringView("preview help",
-		"Select an icon, then click or drag the pinpointer across the monitor.");
+		"Click an icon square to select it, then drag it or click a destination.");
 
 	BLayoutBuilder::Group<>(this, B_VERTICAL, B_USE_DEFAULT_SPACING)
 		.SetInsets(B_USE_WINDOW_SPACING)
 		.AddGroup(B_HORIZONTAL, B_USE_DEFAULT_SPACING)
-			.Add(iconScroll, 0.4f)
+			.AddGroup(B_VERTICAL, B_USE_DEFAULT_SPACING, 0.38f)
+				.Add(iconTitle)
+				.Add(iconScroll, 1.0f)
+			.End()
 			.AddGroup(B_VERTICAL, B_USE_DEFAULT_SPACING, 0.6f)
 				.Add(previewTitle)
+				.Add(fSelectionView)
 				.Add(fPreview, 1.0f)
 				.Add(previewHelp)
 				.AddGroup(B_HORIZONTAL, B_USE_DEFAULT_SPACING)
@@ -84,6 +91,10 @@ void MainWindow::MessageReceived(BMessage* message) {
 
 		case kPreviewPosition:
 			SetPickedPosition(message);
+			break;
+
+		case kPreviewIconSelected:
+			SelectPreviewIcon(message);
 			break;
 
 		default:
@@ -203,6 +214,17 @@ void MainWindow::RefreshIcons() {
 }
 //---------------------------------------------------------------------------------------------------------------------------------//
 
+void MainWindow::SelectPreviewIcon(BMessage* message) {
+	int32 index;
+	if (message->FindInt32("index", &index) != B_OK || index < 0
+		|| (size_t)index >= fIcons.size()) {
+		return;
+	}
+	fIconList->Select(index);
+	UpdateSelection();
+}
+//---------------------------------------------------------------------------------------------------------------------------------//
+
 void MainWindow::SetPickedPosition(BMessage* message) {
 	float x;
 	float y;
@@ -238,12 +260,16 @@ void MainWindow::UpdateSelection() {
 		fXControl->SetText("");
 		fYControl->SetText("");
 		SetControlsEnabled(false);
+		fSelectionView->SetText("Selected icon: none");
 		fPreview->SetIcons(fIcons, -1);
 		fPreview->SetPinPosition(BPoint(0, 0), false);
 		return;
 	}
 
 	if (!fIcons[selection].hasLocation) {
+		BString selected("Selected icon: ");
+		selected << fIcons[selection].name;
+		fSelectionView->SetText(selected.String());
 		fXControl->SetText("0");
 		fYControl->SetText("0");
 		SetControlsEnabled(true);
@@ -252,6 +278,9 @@ void MainWindow::UpdateSelection() {
 		return;
 	}
 
+	BString selected("Selected icon: ");
+	selected << fIcons[selection].name;
+	fSelectionView->SetText(selected.String());
 	BPoint displayed = DisplayPosition(fIcons[selection].location);
 	char coordinate[40];
 	std::snprintf(coordinate, sizeof(coordinate), "%g", displayed.x);

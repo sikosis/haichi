@@ -24,6 +24,8 @@ public:
 	void SetScreenSize(int32 width, int32 height);
 
 private:
+	int32 IconAt(BPoint where) const;
+	bool IconPoint(int32 index, BPoint& point) const;
 	BRect MonitorFrame() const;
 	void PickPosition(BPoint where);
 
@@ -32,6 +34,7 @@ private:
 	int32 fScreenWidth;
 	int32 fScreenHeight;
 	BPoint fPinPosition;
+	BPoint fDragOffset;
 	bool fPinVisible;
 	bool fDragging;
 };

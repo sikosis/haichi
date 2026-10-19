@@ -14,6 +14,7 @@ const uint32 kRefreshIcons = 'refr';
 const uint32 kSelectionChanged = 'sele';
 const uint32 kApplyPosition = 'appl';
 const uint32 kPreviewPosition = 'prvp';
+const uint32 kPreviewIconSelected = 'pris';
 
 } // namespace Haichi
 

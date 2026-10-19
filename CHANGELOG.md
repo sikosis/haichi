@@ -1,5 +1,14 @@
 # Changelog
 
+## v0.11 - 2026-10-20
+
+- Give the Desktop icon list a guaranteed visible pane in a larger window.
+- Display the selected icon name prominently above the monitor preview.
+- Make clicking or dragging an icon marker select that exact icon first.
+- Preserve the grab offset while dragging so markers do not jump under the
+  pointer.
+- Label the preview's X and Y directions to make the grid easier to read.
+
 ## v0.09 - 2026-10-19
 
 - Expand the main window into a larger visual Desktop placement interface.
