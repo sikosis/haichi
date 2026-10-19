@@ -1,5 +1,13 @@
 # Changelog
 
+## v0.09 - 2026-10-19
+
+- Expand the main window into a larger visual Desktop placement interface.
+- Add a scaled monitor grid with icon markers and a selected-icon pinpointer.
+- Allow click-and-drag coordinate selection in the monitor preview before
+  applying an icon move.
+- Report the exact failing release-preparation step and status code.
+
 ## v0.08 - 2026-10-19
 
 - Add a Haiku-native release preparation script that runs the checks and

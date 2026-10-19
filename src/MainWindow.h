@@ -15,6 +15,7 @@ class BTextControl;
 namespace Haichi {
 
 class HaichiEngine;
+class DesktopPreview;
 
 class MainWindow : public BWindow {
 public:
@@ -27,6 +28,7 @@ private:
 	void ApplyPosition();
 	bool ParseCoordinate(BTextControl* control, float& coordinate) const;
 	void RefreshIcons();
+	void SetPickedPosition(BMessage* message);
 	void SetControlsEnabled(bool enabled);
 	void SetStatus(const char* text);
 	void UpdateSelection();
@@ -37,6 +39,7 @@ private:
 	BTextControl* fYControl;
 	BButton* fApplyButton;
 	BStringView* fStatusView;
+	DesktopPreview* fPreview;
 	std::vector<IconItem> fIcons;
 };
 

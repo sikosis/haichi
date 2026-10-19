@@ -4,6 +4,7 @@ APP_MIME_SIG = application/x-vnd.Sikosis-haichi
 
 SRCS = \
 	src/AttrBackend.cpp \
+	src/DesktopPreview.cpp \
 	src/HaichiApplication.cpp \
 	src/HaichiEngine.cpp \
 	src/LayoutStore.cpp \

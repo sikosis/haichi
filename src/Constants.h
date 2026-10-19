@@ -13,6 +13,7 @@ const uint32 kOpenWindow = 'opnw';
 const uint32 kRefreshIcons = 'refr';
 const uint32 kSelectionChanged = 'sele';
 const uint32 kApplyPosition = 'appl';
+const uint32 kPreviewPosition = 'prvp';
 
 } // namespace Haichi
 
