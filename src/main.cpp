@@ -20,7 +20,7 @@
 namespace Haichi {
 
 const char* const kApplicationSignature = "application/x-vnd.Sikosis-haichi";
-const char* const kApplicationVersion = "0.05";
+const char* const kApplicationVersion = "0.06";
 const char* const kDeskbarItemName = "haichi";
 
 namespace {

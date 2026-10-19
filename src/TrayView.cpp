@@ -8,6 +8,7 @@
 #include <Messenger.h>
 #include <PopUpMenu.h>
 #include <Roster.h>
+#include <Window.h>
 
 namespace Haichi {
 

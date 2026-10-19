@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.06 - 2026-10-19
+
+- Include the complete Haiku `BWindow` declaration required by the Deskbar
+  mouse handler.
+
 ## v0.05 - 2026-10-19
 
 - Add a graphical icon list with editable X and Y fields, Apply, Refresh, and
