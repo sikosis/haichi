@@ -4,27 +4,44 @@
 
 #include <Application.h>
 #include <Archivable.h>
+#include <Bitmap.h>
+#include <IconUtils.h>
 #include <MenuItem.h>
 #include <Messenger.h>
+#include <Mime.h>
 #include <PopUpMenu.h>
+#include <Resources.h>
 #include <Roster.h>
 #include <Window.h>
+
+#include <algorithm>
+
+static const int32 kResourceAnchor = 0;
 
 namespace Haichi {
 
 TrayView::TrayView(BRect frame)
 	:
-	BView(frame, kDeskbarItemName, B_FOLLOW_NONE, B_WILL_DRAW) {
+	BView(frame, kDeskbarItemName, B_FOLLOW_NONE, B_WILL_DRAW),
+	fIcon(NULL) {
 	SetViewUIColor(B_PANEL_BACKGROUND_COLOR);
 	SetToolTip("haichi Desktop icon placer");
+	LoadIcon();
 }
 //---------------------------------------------------------------------------------------------------------------------------------//
 
 TrayView::TrayView(BMessage* archive)
 	:
-	BView(archive) {
+	BView(archive),
+	fIcon(NULL) {
 	SetViewUIColor(B_PANEL_BACKGROUND_COLOR);
 	SetToolTip("haichi Desktop icon placer");
+	LoadIcon();
+}
+//---------------------------------------------------------------------------------------------------------------------------------//
+
+TrayView::~TrayView() {
+	delete fIcon;
 }
 //---------------------------------------------------------------------------------------------------------------------------------//
 
@@ -52,20 +69,44 @@ void TrayView::AttachedToWindow() {
 //---------------------------------------------------------------------------------------------------------------------------------//
 
 void TrayView::Draw(BRect updateRect) {
-	BRect bounds = Bounds();
 	SetHighColor(ViewColor());
 	FillRect(updateRect);
 
-	SetHighColor(ui_color(B_CONTROL_TEXT_COLOR));
-	float left = bounds.left + 3.0f;
-	float right = bounds.right - 3.0f;
-	float top = bounds.top + 3.0f;
-	float bottom = bounds.bottom - 3.0f;
-	StrokeRect(BRect(left, top, right, bottom));
-	StrokeLine(BPoint(left, top + (bottom - top) / 2.0f),
-		BPoint(right, top + (bottom - top) / 2.0f));
-	StrokeLine(BPoint(left + (right - left) / 2.0f, top),
-		BPoint(left + (right - left) / 2.0f, bottom));
+	if (fIcon == NULL)
+		return;
+
+	float size = std::min(Bounds().Width(), Bounds().Height());
+	BRect iconFrame(0, 0, size, size);
+	iconFrame.OffsetTo(Bounds().left + (Bounds().Width() - size) / 2.0f,
+		Bounds().top + (Bounds().Height() - size) / 2.0f);
+	SetDrawingMode(B_OP_ALPHA);
+	SetBlendingMode(B_PIXEL_ALPHA, B_ALPHA_OVERLAY);
+	DrawBitmap(fIcon, fIcon->Bounds(), iconFrame);
+	SetDrawingMode(B_OP_COPY);
+}
+//---------------------------------------------------------------------------------------------------------------------------------//
+
+void TrayView::LoadIcon() {
+	BResources resources;
+	if (resources.SetToImage(&kResourceAnchor) != B_OK)
+		return;
+
+	size_t dataSize = 0;
+	const uint8* data = static_cast<const uint8*>(
+		resources.LoadResource(B_VECTOR_ICON_TYPE, 101, &dataSize));
+	if (data == NULL || dataSize == 0)
+		return;
+
+	float viewSize = std::min(Bounds().Width(), Bounds().Height());
+	int32 iconSize = std::max((int32)viewSize + 1, (int32)16);
+	BBitmap* icon = new BBitmap(BRect(0, 0, iconSize - 1, iconSize - 1),
+		B_RGBA32);
+	if (icon->InitCheck() == B_OK
+		&& BIconUtils::GetVectorIcon(data, dataSize, icon) == B_OK) {
+		fIcon = icon;
+		return;
+	}
+	delete icon;
 }
 //---------------------------------------------------------------------------------------------------------------------------------//
 

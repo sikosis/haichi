@@ -3,12 +3,15 @@
 
 #include <View.h>
 
+class BBitmap;
+
 namespace Haichi {
 
 class TrayView : public BView {
 public:
 	explicit TrayView(BRect frame);
 	explicit TrayView(BMessage* archive);
+	virtual ~TrayView();
 
 	static BArchivable* Instantiate(BMessage* archive);
 
@@ -16,6 +19,11 @@ public:
 	virtual void AttachedToWindow();
 	virtual void Draw(BRect updateRect);
 	virtual void MouseDown(BPoint where);
+
+private:
+	void LoadIcon();
+
+	BBitmap* fIcon;
 };
 
 } // namespace Haichi

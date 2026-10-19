@@ -24,6 +24,10 @@ Build on Haiku with the system makefile engine:
 make
 ```
 
+The tracked HVIF application icon is ready to build. After changing its SVG
+master, regenerate it on Haiku with `scripts/regenerate-icon.sh` (install
+`hvif_tools` first).
+
 Run the automated checks on Haiku:
 
 ```sh
@@ -87,4 +91,4 @@ volume and Trash poses are intentionally outside the Phase 1 scope.
   anchors, multi-selection, undo, and layout management UI remain.
 - Phase 3 onward: expanded layout UI and optional placement features remain.
 
-Version: v0.11
+Version: v0.12

@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.12 - 2026-10-20
+
+- Add a Haiku/BeOS-inspired monitor-grid and pinpointer application icon.
+- Embed the native HVIF icon for Tracker, the About box, and the Deskbar tray.
+- Add a repeatable SVG-to-HVIF regeneration script.
+
 ## v0.11 - 2026-10-20
 
 - Give the Desktop icon list a guaranteed visible pane in a larger window.
