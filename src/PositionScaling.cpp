@@ -10,6 +10,11 @@ const float kMaximumTrackerCoordinate = 50000.0f;
 
 } // namespace
 
+BPoint DisplayPosition(BPoint trackerPosition) {
+	return BPoint(trackerPosition.y, trackerPosition.x);
+}
+//---------------------------------------------------------------------------------------------------------------------------------//
+
 BPoint ScalePosition(BPoint position, int32 savedWidth, int32 savedHeight,
 	int32 currentWidth, int32 currentHeight) {
 	if (savedWidth <= 0 || savedHeight <= 0 || currentWidth <= 0

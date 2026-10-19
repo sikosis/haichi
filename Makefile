@@ -4,9 +4,12 @@ APP_MIME_SIG = application/x-vnd.Sikosis-haichi
 
 SRCS = \
 	src/AttrBackend.cpp \
+	src/HaichiApplication.cpp \
 	src/HaichiEngine.cpp \
 	src/LayoutStore.cpp \
+	src/MainWindow.cpp \
 	src/PositionScaling.cpp \
+	src/TrayView.cpp \
 	src/main.cpp
 
 RDEFS = resources/haichi.rdef

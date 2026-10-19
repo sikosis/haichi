@@ -3,13 +3,13 @@
 haichi is a native Haiku utility for placing Desktop icons at exact pixel
 coordinates and saving named Desktop layouts.
 
-The current implementation is the Phase 1 command-line application described
-in the design document. It provides one shared engine and an attribute backend
-that follows Tracker's current `PoseInfo` format.
+The current implementation includes the Phase 1 command-line application and
+the first Phase 2 graphical interface described in the design document. It
+provides one shared engine and an attribute backend that follows Tracker's
+current `PoseInfo` format.
 
-The Phase 1 resource uses `B_MULTIPLE_LAUNCH` so independent terminal commands
-work normally. Phase 2 will change the installed background application to
-`B_SINGLE_LAUNCH` and forward command requests to it.
+The resource temporarily uses `B_MULTIPLE_LAUNCH` so independent terminal
+commands continue to work while Phase 2 command forwarding is implemented.
 
 Tracker does not reload an existing pose's location for an ordinary attribute
 notification. After a successful write, haichi asks the Desktop pose view to
@@ -31,6 +31,12 @@ make check
 ```
 
 ## Usage
+
+Launch `haichi` without arguments to open the graphical interface and install
+the Deskbar item. Select a Desktop icon, enter its X and Y coordinates, and
+choose Apply. Closing the window hides it; the Deskbar item can reopen it.
+
+The command-line interface remains available:
 
 ```text
 haichi list
@@ -56,9 +62,10 @@ volume and Trash poses are intentionally outside the Phase 1 scope.
 
 - Phase 0: Tracker pose format confirmed against current Haiku source; live
   stable/nightly validation remains.
-- Phase 1: engine and command-line interface foundation implemented; undo,
-  Haiku build, and live tests remain.
-- Phase 2 onward: Deskbar replicant, graphical window, undo UI, and layout
-  management UI remain to be implemented.
+- Phase 1: engine and command-line interface implemented and live-tested on
+  Haiku; undo remains.
+- Phase 2: Deskbar item and graphical X/Y placement foundation implemented;
+  anchors, multi-selection, undo, and layout management UI remain.
+- Phase 3 onward: expanded layout UI and optional placement features remain.
 
-Version: v0.04
+Version: v0.05

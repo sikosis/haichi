@@ -5,6 +5,7 @@
 
 namespace Haichi {
 
+BPoint DisplayPosition(BPoint trackerPosition);
 BPoint ScalePosition(BPoint position, int32 savedWidth, int32 savedHeight,
 	int32 currentWidth, int32 currentHeight);
 bool IsSanePosition(BPoint position);

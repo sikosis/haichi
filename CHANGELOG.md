@@ -1,5 +1,13 @@
 # Changelog
 
+## v0.05 - 2026-10-19
+
+- Add a graphical icon list with editable X and Y fields, Apply, Refresh, and
+  status feedback.
+- Add an installable Deskbar item with Open, About, and Quit actions.
+- Preserve the command-line interface while Phase 2 command forwarding is
+  developed.
+
 ## v0.04 - 2026-10-19
 
 - Correct the coordinate order reported by `haichi list` so X appears before Y.

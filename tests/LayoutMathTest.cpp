@@ -9,6 +9,9 @@
 using namespace Haichi;
 
 int main() {
+	BPoint displayed = DisplayPosition(BPoint(340, 120));
+	assert(displayed == BPoint(120, 340));
+
 	BPoint unchanged = ScalePosition(BPoint(120, 340), 1920, 1080, 1920, 1080);
 	assert(unchanged == BPoint(120, 340));
 

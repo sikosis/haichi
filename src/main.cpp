@@ -12,6 +12,7 @@
 
 #include "AttrBackend.h"
 #include "Constants.h"
+#include "HaichiApplication.h"
 #include "HaichiEngine.h"
 #include "LayoutStore.h"
 #include "PositionScaling.h"
@@ -19,7 +20,8 @@
 namespace Haichi {
 
 const char* const kApplicationSignature = "application/x-vnd.Sikosis-haichi";
-const char* const kApplicationVersion = "0.04";
+const char* const kApplicationVersion = "0.05";
+const char* const kDeskbarItemName = "haichi";
 
 namespace {
 
@@ -85,8 +87,9 @@ int RunList(HaichiEngine& engine) {
 
 	for (size_t index = 0; index < icons.size(); index++) {
 		if (icons[index].hasLocation) {
-			std::printf("%g\t%g\t%s\n", icons[index].location.y,
-				icons[index].location.x, icons[index].name.String());
+			BPoint displayed = DisplayPosition(icons[index].location);
+			std::printf("%g\t%g\t%s\n", displayed.x, displayed.y,
+				icons[index].name.String());
 		} else {
 			std::printf("-\t-\t%s\n", icons[index].name.String());
 		}
@@ -165,6 +168,12 @@ int RunRestore(HaichiEngine& engine, const char* name) {
 
 int main(int argumentCount, char** arguments) {
 	using namespace Haichi;
+
+	if (argumentCount == 1) {
+		HaichiApplication application;
+		application.Run();
+		return kSuccess;
+	}
 
 	if (argumentCount < 2) {
 		PrintUsage(stderr);
