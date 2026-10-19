@@ -82,7 +82,6 @@ status_t HaichiEngine::RestoreLayout(const char* name, int32 screenWidth,
 
 		BPoint location = ScalePosition(entry.location, layout.screenWidth,
 			layout.screenHeight, screenWidth, screenHeight);
-		location = ClampPosition(location, screenWidth, screenHeight);
 		result = fBackend->SetLocation(icon->ref, location);
 		if (result != B_OK)
 			return result;

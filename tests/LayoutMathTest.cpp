@@ -2,6 +2,7 @@
 
 #include <cassert>
 #include <cstdio>
+#include <limits>
 
 #include "PositionScaling.h"
 
@@ -17,11 +18,11 @@ int main() {
 	BPoint noSavedFrame = ScalePosition(BPoint(120, 340), 0, 0, 1920, 1080);
 	assert(noSavedFrame == BPoint(120, 340));
 
-	BPoint clampedLow = ClampPosition(BPoint(-20, -30), 1920, 1080);
-	assert(clampedLow == BPoint(0, 0));
-
-	BPoint clampedHigh = ClampPosition(BPoint(2200, 1500), 1920, 1080);
-	assert(clampedHigh == BPoint(1888, 1048));
+	assert(IsSanePosition(BPoint(-20, -30)));
+	assert(IsSanePosition(BPoint(-50000, 50000)));
+	assert(!IsSanePosition(BPoint(-50001, 0)));
+	assert(!IsSanePosition(BPoint(0, 50001)));
+	assert(!IsSanePosition(BPoint(std::numeric_limits<float>::quiet_NaN(), 0)));
 
 	std::puts("haichi layout tests passed");
 	return 0;

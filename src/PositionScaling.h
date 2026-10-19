@@ -7,7 +7,7 @@ namespace Haichi {
 
 BPoint ScalePosition(BPoint position, int32 savedWidth, int32 savedHeight,
 	int32 currentWidth, int32 currentHeight);
-BPoint ClampPosition(BPoint position, int32 screenWidth, int32 screenHeight);
+bool IsSanePosition(BPoint position);
 
 } // namespace Haichi
 

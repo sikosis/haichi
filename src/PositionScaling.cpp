@@ -1,12 +1,12 @@
 #include "PositionScaling.h"
 
-#include <algorithm>
+#include <cmath>
 
 namespace Haichi {
 
 namespace {
 
-const int32 kDefaultIconSize = 32;
+const float kMaximumTrackerCoordinate = 50000.0f;
 
 } // namespace
 
@@ -23,15 +23,12 @@ BPoint ScalePosition(BPoint position, int32 savedWidth, int32 savedHeight,
 }
 //---------------------------------------------------------------------------------------------------------------------------------//
 
-BPoint ClampPosition(BPoint position, int32 screenWidth, int32 screenHeight) {
-	if (screenWidth <= 0 || screenHeight <= 0)
-		return position;
-
-	float maximumX = (float)std::max(0, screenWidth - kDefaultIconSize);
-	float maximumY = (float)std::max(0, screenHeight - kDefaultIconSize);
-	position.x = std::max(0.0f, std::min(position.x, maximumX));
-	position.y = std::max(0.0f, std::min(position.y, maximumY));
-	return position;
+bool IsSanePosition(BPoint position) {
+	return std::isfinite(position.x) && std::isfinite(position.y)
+		&& position.x >= -kMaximumTrackerCoordinate
+		&& position.x <= kMaximumTrackerCoordinate
+		&& position.y >= -kMaximumTrackerCoordinate
+		&& position.y <= kMaximumTrackerCoordinate;
 }
 //---------------------------------------------------------------------------------------------------------------------------------//
 

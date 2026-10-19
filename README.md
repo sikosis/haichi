@@ -35,6 +35,7 @@ make check
 ```text
 haichi list
 haichi move "Notes.txt" 120 340
+haichi move "Notes.txt" -120 -40
 haichi save work
 haichi restore work
 haichi help
@@ -43,7 +44,8 @@ haichi help
 Layouts are flattened `BMessage` files stored in
 `~/config/settings/haichi/`. Restoring a layout scales positions when the
 current screen dimensions differ from the saved dimensions. Missing Desktop
-items are reported and skipped.
+items are reported and skipped. Exact negative coordinates are preserved;
+coordinates outside Tracker's safe range of -50000 to 50000 are rejected.
 
 haichi currently handles entries in the Desktop directory. Tracker's special
 volume and Trash poses are intentionally outside the Phase 1 scope.
@@ -57,4 +59,4 @@ volume and Trash poses are intentionally outside the Phase 1 scope.
 - Phase 2 onward: Deskbar replicant, graphical window, undo UI, and layout
   management UI remain to be implemented.
 
-Version: v0.02
+Version: v0.03

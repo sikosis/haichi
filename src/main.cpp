@@ -19,7 +19,7 @@
 namespace Haichi {
 
 const char* const kApplicationSignature = "application/x-vnd.Sikosis-haichi";
-const char* const kApplicationVersion = "0.02";
+const char* const kApplicationVersion = "0.03";
 
 namespace {
 
@@ -105,21 +105,14 @@ int RunMove(HaichiEngine& engine, const char* name, const char* xText,
 		return kBadArguments;
 	}
 
-	int32 screenWidth;
-	int32 screenHeight;
-	status_t result = ScreenSize(screenWidth, screenHeight);
-	if (result != B_OK)
-		return ReportError("could not read the screen size", result);
-	BPoint requestedLocation(x, y);
-	BPoint location = ClampPosition(requestedLocation, screenWidth, screenHeight);
-	if (location != requestedLocation) {
+	BPoint location(x, y);
+	if (!IsSanePosition(location)) {
 		std::fprintf(stderr,
-			"haichi: clamped position to %g, %g for the %" B_PRId32
-			" x %" B_PRId32 " Desktop\n", location.x, location.y,
-			screenWidth, screenHeight);
+			"haichi: x and y must be between -50000 and 50000\n");
+		return kBadArguments;
 	}
 
-	result = engine.MoveIcon(name, location);
+	status_t result = engine.MoveIcon(name, location);
 	if (result != B_OK)
 		return ReportError("could not move icon", result, kIconNotFound);
 

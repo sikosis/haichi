@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.03 - 2026-10-19
+
+- Accept exact negative coordinates for direct moves and saved layouts.
+- Validate coordinates against Tracker's safe range instead of clamping them
+  to the visible screen.
+
 ## v0.02 - 2026-10-19
 
 - Link the command-line application and tests with Haiku's standard C++

@@ -264,7 +264,7 @@ A preview pane shows a scaled screen outline; dragging an icon there sets X and 
 
 | Case | Handling |
 | --- | --- |
-| Position off-screen | Clamp X and Y to the current Desktop frame (`BScreen().Frame()`) minus the icon size; warn in the status bar |
+| Position off-screen | Preserve exact coordinates, including negative coordinates, but reject values outside Tracker's safe range of -50000 to 50000 |
 | Icon has no pose attribute yet | Create it; set the directory field to the Desktop node ID |
 | Two icons placed on the same spot | Warn; offer "nudge to nearest free cell" |
 | Multiple workspaces | Positions may be stored per workspace in the extended info; v1 edits the current workspace only |

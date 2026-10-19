@@ -1,5 +1,7 @@
 #include "AttrBackend.h"
 
+#include "PositionScaling.h"
+
 #include <AppDefs.h>
 #include <ByteOrder.h>
 #include <Directory.h>
@@ -177,6 +179,9 @@ status_t AttrBackend::GetLocation(const entry_ref& ref, BPoint* location) const 
 //---------------------------------------------------------------------------------------------------------------------------------//
 
 status_t AttrBackend::SetLocation(const entry_ref& ref, BPoint location) {
+	if (!IsSanePosition(location))
+		return B_BAD_VALUE;
+
 	BNode node(&ref);
 	status_t result = node.InitCheck();
 	if (result != B_OK)
