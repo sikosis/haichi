@@ -3,6 +3,7 @@ TYPE = APP
 APP_MIME_SIG = application/x-vnd.Sikosis-haichi
 
 SRCS = \
+	src/AboutWindow.cpp \
 	src/AttrBackend.cpp \
 	src/DesktopPreview.cpp \
 	src/HaichiApplication.cpp \

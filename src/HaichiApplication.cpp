@@ -1,18 +1,13 @@
 #include "HaichiApplication.h"
 
+#include "AboutWindow.h"
 #include "AttrBackend.h"
 #include "Constants.h"
 #include "LayoutStore.h"
 #include "MainWindow.h"
 
-#include <Alert.h>
-#include <Bitmap.h>
 #include <Deskbar.h>
-#include <IconUtils.h>
-#include <Mime.h>
-#include <Resources.h>
 #include <Roster.h>
-#include <String.h>
 
 namespace Haichi {
 
@@ -30,26 +25,7 @@ HaichiApplication::~HaichiApplication() {
 //---------------------------------------------------------------------------------------------------------------------------------//
 
 void HaichiApplication::AboutRequested() {
-	BString text("haichi v");
-	text << kApplicationVersion
-		<< "\n\nPinpoint placement for Haiku Desktop icons.";
-	BAlert* alert = new BAlert("About haichi", text.String(), "OK");
-	BResources* resources = AppResources();
-	if (resources != NULL) {
-		size_t dataSize = 0;
-		const uint8* data = static_cast<const uint8*>(
-			resources->LoadResource(B_VECTOR_ICON_TYPE, 101, &dataSize));
-		if (data != NULL && dataSize > 0) {
-			BBitmap* icon = new BBitmap(BRect(0, 0, 63, 63), B_RGBA32);
-			if (icon->InitCheck() == B_OK
-				&& BIconUtils::GetVectorIcon(data, dataSize, icon) == B_OK) {
-				alert->SetIcon(icon);
-			} else {
-				delete icon;
-			}
-		}
-	}
-	alert->Go(NULL);
+	(new AboutWindow())->Show();
 }
 //---------------------------------------------------------------------------------------------------------------------------------//
 

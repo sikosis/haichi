@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.13 - 2026-10-20
+
+- Replace the basic About alert with a dedicated Kiru/StreamRadio-style About
+  window containing the application icon, project details, source link,
+  credits, acknowledgements, and licence status.
+
 ## v0.12 - 2026-10-20
 
 - Add a Haiku/BeOS-inspired monitor-grid and pinpointer application icon.
