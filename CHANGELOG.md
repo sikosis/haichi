@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.04 - 2026-10-19
+
+- Correct the coordinate order reported by `haichi list` so X appears before Y.
+
 ## v0.03 - 2026-10-19
 
 - Accept exact negative coordinates for direct moves and saved layouts.

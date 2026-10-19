@@ -19,7 +19,7 @@
 namespace Haichi {
 
 const char* const kApplicationSignature = "application/x-vnd.Sikosis-haichi";
-const char* const kApplicationVersion = "0.03";
+const char* const kApplicationVersion = "0.04";
 
 namespace {
 
@@ -85,8 +85,8 @@ int RunList(HaichiEngine& engine) {
 
 	for (size_t index = 0; index < icons.size(); index++) {
 		if (icons[index].hasLocation) {
-			std::printf("%g\t%g\t%s\n", icons[index].location.x,
-				icons[index].location.y, icons[index].name.String());
+			std::printf("%g\t%g\t%s\n", icons[index].location.y,
+				icons[index].location.x, icons[index].name.String());
 		} else {
 			std::printf("-\t-\t%s\n", icons[index].name.String());
 		}

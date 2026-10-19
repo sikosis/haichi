@@ -41,6 +41,8 @@ haichi restore work
 haichi help
 ```
 
+`haichi list` reports each positioned icon as X, Y, and name.
+
 Layouts are flattened `BMessage` files stored in
 `~/config/settings/haichi/`. Restoring a layout scales positions when the
 current screen dimensions differ from the saved dimensions. Missing Desktop
@@ -59,4 +61,4 @@ volume and Trash poses are intentionally outside the Phase 1 scope.
 - Phase 2 onward: Deskbar replicant, graphical window, undo UI, and layout
   management UI remain to be implemented.
 
-Version: v0.03
+Version: v0.04
