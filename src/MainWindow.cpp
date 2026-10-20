@@ -11,6 +11,7 @@
 #include <ScrollView.h>
 #include <Screen.h>
 #include <Size.h>
+#include <SplitView.h>
 #include <StringItem.h>
 #include <StringView.h>
 #include <TextControl.h>
@@ -37,14 +38,15 @@ MainWindow::MainWindow(HaichiEngine* engine)
 	fSelectionView(new BStringView("selection", "Selected icon: none")),
 	fPreview(new DesktopPreview()) {
 	fIconList->SetSelectionMessage(new BMessage(kSelectionChanged));
-	fIconList->SetExplicitMinSize(BSize(480, 400));
+	fIconList->SetExplicitMinSize(BSize(220, 400));
 	BScrollView* iconScroll = new BScrollView("icon scroll", fIconList, 0,
 		true, true);
-	iconScroll->SetExplicitMinSize(BSize(500, 420));
+	iconScroll->SetExplicitMinSize(BSize(240, 420));
 	BView* iconPane = new BView("icon pane", B_WILL_DRAW);
 	iconPane->SetViewUIColor(B_PANEL_BACKGROUND_COLOR);
-	iconPane->SetExplicitMinSize(BSize(500, 420));
-	iconPane->SetExplicitMaxSize(BSize(500, B_SIZE_UNLIMITED));
+	iconPane->SetExplicitMinSize(BSize(240, 420));
+	BView* previewPane = new BView("preview pane", B_WILL_DRAW);
+	previewPane->SetViewUIColor(B_PANEL_BACKGROUND_COLOR);
 	BButton* refreshButton = new BButton("refresh", "Refresh",
 		new BMessage(kRefreshIcons));
 	BStringView* previewTitle = new BStringView("preview title",
@@ -55,23 +57,25 @@ MainWindow::MainWindow(HaichiEngine* engine)
 	BLayoutBuilder::Group<>(iconPane, B_VERTICAL, B_USE_DEFAULT_SPACING)
 		.Add(iconTitle)
 		.Add(iconScroll, 1.0f);
+	BLayoutBuilder::Group<>(previewPane, B_VERTICAL, B_USE_DEFAULT_SPACING)
+		.Add(previewTitle)
+		.Add(fSelectionView)
+		.Add(fPreview, 1.0f)
+		.Add(previewHelp)
+		.AddGroup(B_HORIZONTAL, B_USE_DEFAULT_SPACING)
+			.Add(fXControl)
+			.Add(fYControl)
+			.Add(fApplyButton)
+		.End();
+	BSplitView* splitView = new BSplitView(B_HORIZONTAL,
+		B_USE_DEFAULT_SPACING);
+	splitView->AddChild(iconPane, 0.34f);
+	splitView->AddChild(previewPane, 0.66f);
+	splitView->SetCollapsible(false);
 
 	BLayoutBuilder::Group<>(this, B_VERTICAL, B_USE_DEFAULT_SPACING)
 		.SetInsets(B_USE_WINDOW_SPACING)
-		.AddGroup(B_HORIZONTAL, B_USE_DEFAULT_SPACING)
-			.Add(iconPane)
-			.AddGroup(B_VERTICAL, B_USE_DEFAULT_SPACING, 1.0f)
-				.Add(previewTitle)
-				.Add(fSelectionView)
-				.Add(fPreview, 1.0f)
-				.Add(previewHelp)
-				.AddGroup(B_HORIZONTAL, B_USE_DEFAULT_SPACING)
-					.Add(fXControl)
-					.Add(fYControl)
-					.Add(fApplyButton)
-				.End()
-			.End()
-		.End()
+		.Add(splitView, 1.0f)
 		.AddGroup(B_HORIZONTAL, B_USE_DEFAULT_SPACING)
 			.Add(fStatusView, 1.0f)
 			.Add(refreshButton)

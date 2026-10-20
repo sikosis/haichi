@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.15 - 2026-10-20
+
+- Replace the fixed-width Desktop icon pane with a draggable native split view.
+- Start the icon list at a balanced width while allowing either side to resize
+  with the window.
+
 ## v0.14 - 2026-10-20
 
 - Give the Desktop icon list a fixed 500-pixel pane that the preview layout

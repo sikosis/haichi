@@ -91,4 +91,4 @@ volume and Trash poses are intentionally outside the Phase 1 scope.
   anchors, multi-selection, undo, and layout management UI remain.
 - Phase 3 onward: expanded layout UI and optional placement features remain.
 
-Version: v0.14
+Version: v0.15
