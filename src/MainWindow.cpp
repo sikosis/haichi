@@ -10,9 +10,11 @@
 #include <ListView.h>
 #include <ScrollView.h>
 #include <Screen.h>
+#include <Size.h>
 #include <StringItem.h>
 #include <StringView.h>
 #include <TextControl.h>
+#include <View.h>
 
 #include <cerrno>
 #include <cmath>
@@ -35,9 +37,14 @@ MainWindow::MainWindow(HaichiEngine* engine)
 	fSelectionView(new BStringView("selection", "Selected icon: none")),
 	fPreview(new DesktopPreview()) {
 	fIconList->SetSelectionMessage(new BMessage(kSelectionChanged));
+	fIconList->SetExplicitMinSize(BSize(480, 400));
 	BScrollView* iconScroll = new BScrollView("icon scroll", fIconList, 0,
-		false, true);
-	iconScroll->SetExplicitMinSize(BSize(340, 420));
+		true, true);
+	iconScroll->SetExplicitMinSize(BSize(500, 420));
+	BView* iconPane = new BView("icon pane", B_WILL_DRAW);
+	iconPane->SetViewUIColor(B_PANEL_BACKGROUND_COLOR);
+	iconPane->SetExplicitMinSize(BSize(500, 420));
+	iconPane->SetExplicitMaxSize(BSize(500, B_SIZE_UNLIMITED));
 	BButton* refreshButton = new BButton("refresh", "Refresh",
 		new BMessage(kRefreshIcons));
 	BStringView* previewTitle = new BStringView("preview title",
@@ -45,15 +52,15 @@ MainWindow::MainWindow(HaichiEngine* engine)
 	BStringView* iconTitle = new BStringView("icon title", "Desktop icons");
 	BStringView* previewHelp = new BStringView("preview help",
 		"Click an icon square to select it, then drag it or click a destination.");
+	BLayoutBuilder::Group<>(iconPane, B_VERTICAL, B_USE_DEFAULT_SPACING)
+		.Add(iconTitle)
+		.Add(iconScroll, 1.0f);
 
 	BLayoutBuilder::Group<>(this, B_VERTICAL, B_USE_DEFAULT_SPACING)
 		.SetInsets(B_USE_WINDOW_SPACING)
 		.AddGroup(B_HORIZONTAL, B_USE_DEFAULT_SPACING)
-			.AddGroup(B_VERTICAL, B_USE_DEFAULT_SPACING, 0.38f)
-				.Add(iconTitle)
-				.Add(iconScroll, 1.0f)
-			.End()
-			.AddGroup(B_VERTICAL, B_USE_DEFAULT_SPACING, 0.6f)
+			.Add(iconPane)
+			.AddGroup(B_VERTICAL, B_USE_DEFAULT_SPACING, 1.0f)
 				.Add(previewTitle)
 				.Add(fSelectionView)
 				.Add(fPreview, 1.0f)

@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.14 - 2026-10-20
+
+- Give the Desktop icon list a fixed 500-pixel pane that the preview layout
+  cannot compress.
+- Add horizontal scrolling for long icon names and coordinate values.
+
 ## v0.13 - 2026-10-20
 
 - Replace the basic About alert with a dedicated Kiru/StreamRadio-style About
