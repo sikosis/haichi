@@ -15,6 +15,8 @@ const uint32 kSelectionChanged = 'sele';
 const uint32 kApplyPosition = 'appl';
 const uint32 kPreviewPosition = 'prvp';
 const uint32 kPreviewIconSelected = 'pris';
+const uint32 kAlignRow = 'alrw';
+const uint32 kAlignColumn = 'alcl';
 
 } // namespace Haichi
 

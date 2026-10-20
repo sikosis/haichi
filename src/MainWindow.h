@@ -25,11 +25,14 @@ public:
 	virtual bool QuitRequested();
 
 private:
+	void AlignSelected(bool horizontal);
 	void ApplyPosition();
+	void CollectSelections(std::vector<int32>& selections) const;
 	bool ParseCoordinate(BTextControl* control, float& coordinate) const;
 	void RefreshIcons();
 	void SelectPreviewIcon(BMessage* message);
 	void SetPickedPosition(BMessage* message);
+	void SetAlignmentControlsEnabled(bool enabled);
 	void SetControlsEnabled(bool enabled);
 	void SetStatus(const char* text);
 	void UpdateSelection();
@@ -38,7 +41,10 @@ private:
 	BListView* fIconList;
 	BTextControl* fXControl;
 	BTextControl* fYControl;
+	BTextControl* fSpacingControl;
 	BButton* fApplyButton;
+	BButton* fAlignRowButton;
+	BButton* fAlignColumnButton;
 	BStringView* fStatusView;
 	BStringView* fSelectionView;
 	DesktopPreview* fPreview;

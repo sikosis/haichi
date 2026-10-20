@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.16 - 2026-10-20
+
+- Add multiple selection to the Desktop icon list.
+- Add tested row and column alignment with configurable pixel spacing.
+- Preserve all selected icons when the list refreshes after an alignment.
+
 ## v0.15 - 2026-10-20
 
 - Replace the fixed-width Desktop icon pane with a draggable native split view.

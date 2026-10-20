@@ -59,6 +59,9 @@ icon. Clicking an icon square selects that exact icon before dragging it, and
 the selected icon's name remains visible above the preview. Closing the window
 hides it; the Deskbar item can reopen it.
 
+Select multiple icons in the list, choose a pixel spacing, then use Align row
+or Align column to arrange them from their current top-left extent.
+
 The command-line interface remains available:
 
 ```text
@@ -91,4 +94,4 @@ volume and Trash poses are intentionally outside the Phase 1 scope.
   anchors, multi-selection, undo, and layout management UI remain.
 - Phase 3 onward: expanded layout UI and optional placement features remain.
 
-Version: v0.15
+Version: v0.16
