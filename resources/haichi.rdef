@@ -7,9 +7,9 @@ resource(101, "BEOS:ICON") #'VICN' import "haichi.hvif";
 resource app_version {
 	major = 0,
 	middle = 1,
-	minor = 6,
+	minor = 7,
 	variety = B_APPV_DEVELOPMENT,
-	internal = 16,
-	short_info = "haichi v0.16",
-	long_info = "haichi Desktop icon placer v0.16"
+	internal = 17,
+	short_info = "haichi v0.17",
+	long_info = "haichi Desktop icon placer v0.17"
 };

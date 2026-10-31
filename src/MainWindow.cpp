@@ -110,13 +110,20 @@ MainWindow::MainWindow(HaichiEngine* engine) :	BWindow(BRect(60, 60, 1160, 680),
 			.Add(refreshButton)
 		.End();
 
-	fPlaceLeftButton->SetToolTip("Set coordinates to the left of the reference icon");
-	fPlaceRightButton->SetToolTip("Set coordinates to the right of the reference icon");
-	fPlaceAboveButton->SetToolTip("Set coordinates above the reference icon");
-	fPlaceBelowButton->SetToolTip("Set coordinates below the reference icon");
+	fPlaceLeftButton->SetToolTip(
+		"Set coordinates to the left of the reference icon");
+	fPlaceRightButton->SetToolTip(
+		"Set coordinates to the right of the reference icon");
+	fPlaceAboveButton->SetToolTip(
+		"Set coordinates above the reference icon");
+	fPlaceBelowButton->SetToolTip(
+		"Set coordinates below the reference icon");
+	fReferenceField->SetExplicitMinSize(BSize(180, B_SIZE_UNSET));
+	fReferenceField->SetExplicitMaxSize(BSize(280, B_SIZE_UNLIMITED));
 	fReferenceMenu->SetTargetForItems(this);
 	SetControlsEnabled(false);
 	SetAlignmentControlsEnabled(false);
+	fSpacingControl->SetEnabled(false);
 	UpdateReferenceControls();
 	PostMessage(kRefreshIcons);
 }
@@ -308,6 +315,18 @@ void MainWindow::CollectSelections(std::vector<int32>& selections) const {
 }
 //---------------------------------------------------------------------------------------------------------------------------------//
 
+bool MainWindow::GetScreenSize(int32& width, int32& height) const {
+	BScreen screen(B_MAIN_SCREEN_ID);
+	if (!screen.IsValid())
+		return false;
+
+	BRect frame = screen.Frame();
+	width = frame.IntegerWidth() + 1;
+	height = frame.IntegerHeight() + 1;
+	return true;
+}
+//---------------------------------------------------------------------------------------------------------------------------------//
+
 bool MainWindow::ParseCoordinate(BTextControl* control, float& coordinate) const {
 	const char* text = control->Text();
 	if (text == NULL || text[0] == '\0')
@@ -324,7 +343,97 @@ bool MainWindow::ParseCoordinate(BTextControl* control, float& coordinate) const
 }
 //---------------------------------------------------------------------------------------------------------------------------------//
 
+void MainWindow::PlaceRelative(int32 horizontalDirection,
+	int32 verticalDirection) {
+	std::vector<int32> selections;
+	CollectSelections(selections);
+	if (selections.size() != 1) {
+		SetStatus("Select one icon to position relative to a reference");
+		return;
+	}
+	if (fReferenceIndex < 0 || (size_t)fReferenceIndex >= fIcons.size()
+		|| fReferenceIndex == selections[0]) {
+		SetStatus("Choose a different reference icon");
+		return;
+	}
+	if (!fIcons[fReferenceIndex].hasLocation) {
+		SetStatus("The reference icon does not have a current position");
+		return;
+	}
+
+	float spacing;
+	if (!ParseCoordinate(fSpacingControl, spacing) || spacing < 0
+		|| spacing > 50000) {
+		SetStatus("Spacing must be between 0 and 50000");
+		return;
+	}
+
+	BPoint reference = DisplayPosition(fIcons[fReferenceIndex].location);
+	BPoint position = RelativePosition(reference, horizontalDirection,
+		verticalDirection, spacing);
+	if (!IsSanePosition(position)) {
+		SetStatus("Relative position exceeds Tracker's safe range");
+		return;
+	}
+
+	char coordinate[40];
+	std::snprintf(coordinate, sizeof(coordinate), "%g", position.x);
+	fXControl->SetText(coordinate);
+	std::snprintf(coordinate, sizeof(coordinate), "%g", position.y);
+	fYControl->SetText(coordinate);
+	fPreview->SetPinPosition(position, true);
+	SetControlsEnabled(true);
+
+	const char* direction = "at";
+	if (horizontalDirection < 0)
+		direction = "left of";
+	else if (horizontalDirection > 0)
+		direction = "right of";
+	else if (verticalDirection < 0)
+		direction = "above";
+	else if (verticalDirection > 0)
+		direction = "below";
+	BString status("Coordinates set ");
+	status << direction << " " << fIcons[fReferenceIndex].name
+		<< "; choose Apply";
+	SetStatus(status.String());
+}
+//---------------------------------------------------------------------------------------------------------------------------------//
+
+void MainWindow::RebuildReferenceMenu(const char* previousName) {
+	while (fReferenceMenu->CountItems() > 0)
+		delete fReferenceMenu->RemoveItem((int32)0);
+	fReferenceIndex = -1;
+
+	for (size_t index = 0; index < fIcons.size(); index++) {
+		BMessage* message = new BMessage(kReferenceIconChanged);
+		message->AddInt32("index", (int32)index);
+		BMenuItem* item = new BMenuItem(fIcons[index].name.String(), message);
+		fReferenceMenu->AddItem(item);
+		if (previousName != NULL && previousName[0] != '\0'
+			&& fIcons[index].name == previousName) {
+			fReferenceIndex = (int32)index;
+		}
+	}
+
+	if (fReferenceIndex < 0) {
+		for (size_t index = 0; index < fIcons.size(); index++) {
+			if (fIcons[index].hasLocation) {
+				fReferenceIndex = (int32)index;
+				break;
+			}
+		}
+	}
+	if (fReferenceIndex >= 0)
+		fReferenceMenu->ItemAt(fReferenceIndex)->SetMarked(true);
+	fReferenceMenu->SetTargetForItems(this);
+}
+//---------------------------------------------------------------------------------------------------------------------------------//
+
 void MainWindow::RefreshIcons() {
+	BString referenceName;
+	if (fReferenceIndex >= 0 && (size_t)fReferenceIndex < fIcons.size())
+		referenceName = fIcons[fReferenceIndex].name;
 	std::vector<BString> selectedNames;
 	std::vector<int32> selections;
 	CollectSelections(selections);
@@ -370,11 +479,79 @@ void MainWindow::RefreshIcons() {
 			}
 		}
 	}
+	RebuildReferenceMenu(referenceName.String());
 	UpdateSelection();
 
 	BString status;
 	status.SetToFormat("Listed %" B_PRId32 " Desktop icons",
 		(int32)fIcons.size());
+	SetStatus(status.String());
+}
+//---------------------------------------------------------------------------------------------------------------------------------//
+
+void MainWindow::RestoreSnapshot() {
+	int32 screenWidth;
+	int32 screenHeight;
+	if (!GetScreenSize(screenWidth, screenHeight)) {
+		SetStatus("Could not read the current screen size");
+		return;
+	}
+
+	RestoreResult restoreResult;
+	status_t result = fEngine->RestoreLayout(kSnapshotName, screenWidth,
+		screenHeight, restoreResult);
+	if (result != B_OK) {
+		RefreshIcons();
+		if (result == B_ENTRY_NOT_FOUND) {
+			SetStatus("No snapshot has been saved yet");
+			return;
+		}
+		BString status("Could not restore snapshot: ");
+		status << std::strerror(result);
+		SetStatus(status.String());
+		return;
+	}
+
+	RefreshIcons();
+	BString status;
+	status.SetToFormat("Restored %" B_PRId32 " icons from snapshot",
+		restoreResult.moved);
+	if (!restoreResult.missing.empty())
+		status << "; skipped " << (int32)restoreResult.missing.size() << " missing";
+	SetStatus(status.String());
+}
+//---------------------------------------------------------------------------------------------------------------------------------//
+
+void MainWindow::SaveSnapshot() {
+	int32 screenWidth;
+	int32 screenHeight;
+	if (!GetScreenSize(screenWidth, screenHeight)) {
+		SetStatus("Could not read the current screen size");
+		return;
+	}
+
+	status_t result = fEngine->SaveLayout(kSnapshotName, screenWidth,
+		screenHeight);
+	if (result != B_OK) {
+		BString status("Could not save snapshot: ");
+		status << std::strerror(result);
+		SetStatus(status.String());
+		return;
+	}
+	SetStatus("Saved a snapshot of the current Desktop icon positions");
+}
+//---------------------------------------------------------------------------------------------------------------------------------//
+
+void MainWindow::SetReferenceIcon(BMessage* message) {
+	int32 index;
+	if (message->FindInt32("index", &index) != B_OK || index < 0
+		|| (size_t)index >= fIcons.size()) {
+		return;
+	}
+	fReferenceIndex = index;
+	UpdateReferenceControls();
+	BString status("Reference icon: ");
+	status << fIcons[index].name;
 	SetStatus(status.String());
 }
 //---------------------------------------------------------------------------------------------------------------------------------//
@@ -408,7 +585,6 @@ void MainWindow::SetPickedPosition(BMessage* message) {
 //---------------------------------------------------------------------------------------------------------------------------------//
 
 void MainWindow::SetAlignmentControlsEnabled(bool enabled) {
-	fSpacingControl->SetEnabled(enabled);
 	fAlignRowButton->SetEnabled(enabled);
 	fAlignColumnButton->SetEnabled(enabled);
 }
@@ -426,9 +602,26 @@ void MainWindow::SetStatus(const char* text) {
 }
 //---------------------------------------------------------------------------------------------------------------------------------//
 
+void MainWindow::UpdateReferenceControls() {
+	fReferenceField->SetEnabled(fIcons.size() > 1);
+	std::vector<int32> selections;
+	CollectSelections(selections);
+	bool enabled = selections.size() == 1 && fReferenceIndex >= 0
+		&& (size_t)fReferenceIndex < fIcons.size()
+		&& fReferenceIndex != selections[0]
+		&& fIcons[fReferenceIndex].hasLocation;
+	fPlaceLeftButton->SetEnabled(enabled);
+	fPlaceRightButton->SetEnabled(enabled);
+	fPlaceAboveButton->SetEnabled(enabled);
+	fPlaceBelowButton->SetEnabled(enabled);
+}
+//---------------------------------------------------------------------------------------------------------------------------------//
+
 void MainWindow::UpdateSelection() {
 	std::vector<int32> selections;
 	CollectSelections(selections);
+	fSpacingControl->SetEnabled(!selections.empty());
+	UpdateReferenceControls();
 	if (selections.empty()) {
 		fXControl->SetText("");
 		fYControl->SetText("");

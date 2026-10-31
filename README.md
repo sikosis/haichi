@@ -62,6 +62,15 @@ hides it; the Deskbar item can reopen it.
 Select multiple icons in the list, choose a pixel spacing, then use Align row
 or Align column to arrange them from their current top-left extent.
 
+Save Snapshot records every current Desktop icon position in the persistent
+`snapshot` layout; Restore Snapshot returns the icons to those positions and
+scales them if the screen size has changed.
+
+For relative placement, select one icon to move, choose another icon from the
+Reference menu, set the desired spacing, then choose Left, Right, Above, or
+Below. haichi fills the X and Y fields so the icons line up on the other axis;
+choose Apply to confirm the move.
+
 The command-line interface remains available:
 
 ```text
@@ -90,8 +99,9 @@ volume and Trash poses are intentionally outside the Phase 1 scope.
   stable/nightly validation remains.
 - Phase 1: engine and command-line interface implemented and live-tested on
   Haiku; undo remains.
-- Phase 2: Deskbar item and graphical X/Y placement foundation implemented;
-  anchors, multi-selection, undo, and layout management UI remain.
+- Phase 2: Deskbar item, graphical X/Y placement, multi-selection, alignment,
+  relative placement, and quick snapshot restore implemented; anchors, undo,
+  and expanded layout management UI remain.
 - Phase 3 onward: expanded layout UI and optional placement features remain.
 
-Version: v0.16
+Version: v0.17

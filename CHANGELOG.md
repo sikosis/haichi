@@ -1,5 +1,13 @@
 # Changelog
 
+## v0.17 - 2026-11-01
+
+- Reduce the main window's default height by 100 pixels.
+- Add one-click persistent Save Snapshot and Restore Snapshot controls.
+- Add a reference-icon picker and Left, Right, Above, and Below helpers that
+  calculate aligned coordinates using the configured spacing before Apply.
+- Add tests for relative coordinate calculations in every direction.
+
 ## v0.16 - 2026-10-20
 
 - Add multiple selection to the Desktop icon list.
