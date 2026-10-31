@@ -38,10 +38,12 @@ struct PoseInfo {
 	BPoint location;
 };
 
+
 bool CompareIcons(const IconItem& left, const IconItem& right) {
 	return left.name.ICompare(right.name) < 0;
 }
 //---------------------------------------------------------------------------------------------------------------------------------//
+
 
 status_t GetDesktopRef(entry_ref& desktopRef) {
 	BPath desktopPath;
@@ -57,6 +59,7 @@ status_t GetDesktopRef(entry_ref& desktopRef) {
 	return desktopEntry.GetRef(&desktopRef);
 }
 //---------------------------------------------------------------------------------------------------------------------------------//
+
 
 status_t RefreshTrackerPose(const entry_ref& ref) {
 	BMessenger tracker(kTrackerSignature);
@@ -117,6 +120,7 @@ status_t RefreshTrackerPose(const entry_ref& ref) {
 }
 //---------------------------------------------------------------------------------------------------------------------------------//
 
+
 } // namespace
 
 IconPositionBackend::~IconPositionBackend() {
@@ -154,6 +158,7 @@ status_t AttrBackend::ListIcons(std::vector<IconItem>& icons) const {
 }
 //---------------------------------------------------------------------------------------------------------------------------------//
 
+
 status_t AttrBackend::GetLocation(const entry_ref& ref, BPoint* location) const {
 	if (location == NULL)
 		return B_BAD_VALUE;
@@ -164,8 +169,7 @@ status_t AttrBackend::GetLocation(const entry_ref& ref, BPoint* location) const 
 		return result;
 
 	PoseInfo poseInfo;
-	ssize_t bytesRead = node.ReadAttr(kPoseInfoAttribute, B_RAW_TYPE, 0,
-		&poseInfo, sizeof(poseInfo));
+	ssize_t bytesRead = node.ReadAttr(kPoseInfoAttribute, B_RAW_TYPE, 0, &poseInfo, sizeof(poseInfo));
 	if (bytesRead < 0)
 		return (status_t)bytesRead;
 	if ((size_t)bytesRead != sizeof(poseInfo))
@@ -177,6 +181,7 @@ status_t AttrBackend::GetLocation(const entry_ref& ref, BPoint* location) const 
 	return B_OK;
 }
 //---------------------------------------------------------------------------------------------------------------------------------//
+
 
 status_t AttrBackend::SetLocation(const entry_ref& ref, BPoint location) {
 	if (!IsSanePosition(location))
@@ -192,8 +197,7 @@ status_t AttrBackend::SetLocation(const entry_ref& ref, BPoint location) {
 	poseInfo.initialisedDirectory = ref.directory;
 	poseInfo.location = location;
 
-	ssize_t bytesWritten = node.WriteAttr(kPoseInfoAttribute, B_RAW_TYPE, 0,
-		&poseInfo, sizeof(poseInfo));
+	ssize_t bytesWritten = node.WriteAttr(kPoseInfoAttribute, B_RAW_TYPE, 0, &poseInfo, sizeof(poseInfo));
 	if (bytesWritten < 0)
 		return (status_t)bytesWritten;
 	if ((size_t)bytesWritten != sizeof(poseInfo))
@@ -219,5 +223,6 @@ status_t AttrBackend::SetLocation(const entry_ref& ref, BPoint location) {
 	return RefreshTrackerPose(ref);
 }
 //---------------------------------------------------------------------------------------------------------------------------------//
+
 
 } // namespace Haichi

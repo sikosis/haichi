@@ -5,18 +5,18 @@
 
 namespace Haichi {
 
-extern const char* const kApplicationSignature;
-extern const char* const kApplicationVersion;
-extern const char* const kDeskbarItemName;
+    extern const char* const kApplicationSignature;
+    extern const char* const kApplicationVersion;
+    extern const char* const kDeskbarItemName;
 
-const uint32 kOpenWindow = 'opnw';
-const uint32 kRefreshIcons = 'refr';
-const uint32 kSelectionChanged = 'sele';
-const uint32 kApplyPosition = 'appl';
-const uint32 kPreviewPosition = 'prvp';
-const uint32 kPreviewIconSelected = 'pris';
-const uint32 kAlignRow = 'alrw';
-const uint32 kAlignColumn = 'alcl';
+    const uint32 kOpenWindow = 'opnw';
+    const uint32 kRefreshIcons = 'refr';
+    const uint32 kSelectionChanged = 'sele';
+    const uint32 kApplyPosition = 'appl';
+    const uint32 kPreviewPosition = 'prvp';
+    const uint32 kPreviewIconSelected = 'pris';
+    const uint32 kAlignRow = 'alrw';
+    const uint32 kAlignColumn = 'alcl';
 
 } // namespace Haichi
 

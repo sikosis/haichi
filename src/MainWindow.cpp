@@ -25,38 +25,29 @@
 
 namespace Haichi {
 
-MainWindow::MainWindow(HaichiEngine* engine)
-	:
-	BWindow(BRect(60, 60, 1160, 780), "haichi", B_TITLED_WINDOW,
-		B_AUTO_UPDATE_SIZE_LIMITS),
-	fEngine(engine),
-	fIconList(new BListView("icons", B_MULTIPLE_SELECTION_LIST)),
-	fXControl(new BTextControl("x", "X:", "", NULL)),
-	fYControl(new BTextControl("y", "Y:", "", NULL)),
-	fSpacingControl(new BTextControl("spacing", "Spacing:", "96", NULL)),
-	fApplyButton(new BButton("apply", "Apply", new BMessage(kApplyPosition))),
-	fAlignRowButton(new BButton("align row", "Align row",
-		new BMessage(kAlignRow))),
-	fAlignColumnButton(new BButton("align column", "Align column",
-		new BMessage(kAlignColumn))),
-	fStatusView(new BStringView("status", "Ready")),
-	fSelectionView(new BStringView("selection", "Selected icon: none")),
-	fPreview(new DesktopPreview()) {
+MainWindow::MainWindow(HaichiEngine* engine) :	BWindow(BRect(60, 60, 1160, 780), "haichi", B_TITLED_WINDOW, B_AUTO_UPDATE_SIZE_LIMITS),
+												fEngine(engine), fIconList(new BListView("icons", B_MULTIPLE_SELECTION_LIST)),
+												fXControl(new BTextControl("x", "X:", "", NULL)),
+												fYControl(new BTextControl("y", "Y:", "", NULL)),
+												fSpacingControl(new BTextControl("spacing", "Spacing:", "96", NULL)),
+												fApplyButton(new BButton("apply", "Apply", new BMessage(kApplyPosition))),
+												fAlignRowButton(new BButton("align row", "Align row", new BMessage(kAlignRow))),
+												fAlignColumnButton(new BButton("align column", "Align column", new BMessage(kAlignColumn))),
+												fStatusView(new BStringView("status", "Ready")), fSelectionView(new BStringView("selection", "Selected icon: none")),
+												fPreview(new DesktopPreview()) {
+
 	fIconList->SetSelectionMessage(new BMessage(kSelectionChanged));
 	fIconList->SetExplicitMinSize(BSize(220, 400));
-	BScrollView* iconScroll = new BScrollView("icon scroll", fIconList, 0,
-		true, true);
+	BScrollView* iconScroll = new BScrollView("icon scroll", fIconList, 0, true, true);
 	iconScroll->SetExplicitMinSize(BSize(240, 420));
 	BView* iconPane = new BView("icon pane", B_WILL_DRAW);
 	iconPane->SetViewUIColor(B_PANEL_BACKGROUND_COLOR);
 	iconPane->SetExplicitMinSize(BSize(240, 420));
 	BView* previewPane = new BView("preview pane", B_WILL_DRAW);
 	previewPane->SetViewUIColor(B_PANEL_BACKGROUND_COLOR);
-	BButton* refreshButton = new BButton("refresh", "Refresh",
-		new BMessage(kRefreshIcons));
-	BStringView* previewTitle = new BStringView("preview title",
-		"Desktop position preview");
-	BStringView* iconTitle = new BStringView("icon title", "Desktop icons");
+	BButton* refreshButton = new BButton("refresh", "Refresh", new BMessage(kRefreshIcons));
+	BStringView* previewTitle = new BStringView("preview title", "Desktop Position Preview");
+	BStringView* iconTitle = new BStringView("icon title", "Desktop Icons");
 	BStringView* previewHelp = new BStringView("preview help",
 		"Click an icon square to select it, then drag it or click a destination.");
 	BLayoutBuilder::Group<>(iconPane, B_VERTICAL, B_USE_DEFAULT_SPACING)
@@ -96,6 +87,7 @@ MainWindow::MainWindow(HaichiEngine* engine)
 	PostMessage(kRefreshIcons);
 }
 //---------------------------------------------------------------------------------------------------------------------------------//
+
 
 void MainWindow::MessageReceived(BMessage* message) {
 	switch (message->what) {

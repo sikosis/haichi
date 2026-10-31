@@ -23,35 +23,31 @@
 namespace Haichi {
 
 namespace {
+	class IconView : public BView {
+		public:
+			explicit IconView(BBitmap* icon);
+			virtual ~IconView();
+			virtual void Draw(BRect updateRect);
 
-class IconView : public BView {
-public:
-	explicit IconView(BBitmap* icon);
-	virtual ~IconView();
+		private:
+			BBitmap* fIcon;
+	};
 
-	virtual void Draw(BRect updateRect);
+	class LinkView : public BStringView {
+		public:
+			LinkView(const char* name, const char* label, const char* url);
 
-private:
-	BBitmap* fIcon;
-};
+			virtual void AttachedToWindow();
+			virtual void MouseDown(BPoint where);
 
-
-class LinkView : public BStringView {
-public:
-	LinkView(const char* name, const char* label, const char* url);
-
-	virtual void AttachedToWindow();
-	virtual void MouseDown(BPoint where);
-
-private:
-	BString fUrl;
-};
+		private:
+			BString fUrl;
+	};
 
 
 BBitmap* LoadAppIcon() {
 	const int32 iconSize = 96;
-	BBitmap* icon = new BBitmap(BRect(0, 0, iconSize - 1, iconSize - 1),
-		B_RGBA32);
+	BBitmap* icon = new BBitmap(BRect(0, 0, iconSize - 1, iconSize - 1), B_RGBA32);
 	if (icon->InitCheck() != B_OK) {
 		delete icon;
 		return NULL;
@@ -60,18 +56,16 @@ BBitmap* LoadAppIcon() {
 	BResources* resources = BApplication::AppResources();
 	if (resources != NULL) {
 		size_t dataSize = 0;
-		const uint8* data = static_cast<const uint8*>(
-			resources->LoadResource(B_VECTOR_ICON_TYPE, "BEOS:ICON", &dataSize));
-		if (data != NULL && dataSize > 0
-			&& BIconUtils::GetVectorIcon(data, dataSize, icon) == B_OK) {
+		const uint8* data = static_cast<const uint8*>(resources->LoadResource(B_VECTOR_ICON_TYPE, "BEOS:ICON", &dataSize));
+		if (data != NULL && dataSize > 0 && BIconUtils::GetVectorIcon(data, dataSize, icon) == B_OK) {
 			return icon;
 		}
 	}
-
 	delete icon;
 	return NULL;
 }
 //---------------------------------------------------------------------------------------------------------------------------------//
+
 
 BStringView* Heading(const char* name, const char* text) {
 	BStringView* heading = new BStringView(name, text);
@@ -80,6 +74,7 @@ BStringView* Heading(const char* name, const char* text) {
 }
 //---------------------------------------------------------------------------------------------------------------------------------//
 
+
 BView* CreateCreditsView() {
 	BView* view = new BView("Credits", B_WILL_DRAW);
 	view->SetViewUIColor(B_PANEL_BACKGROUND_COLOR);
@@ -87,19 +82,20 @@ BView* CreateCreditsView() {
 	BLayoutBuilder::Group<>(view, B_VERTICAL, 5.0f)
 		.SetInsets(12.0f)
 		.Add(Heading("project heading", "Project"))
-		.Add(new BStringView("designer", "Designed and developed by Sikosis"))
+		.Add(new BStringView("designer", "From the brain of Sikosis"))
+		.Add(new BStringView("contributors", "Co-created with Codex AI"))
 		.Add(new BStringView("created", "Created: 19 October 2026"))
 		.Add(new BStringView("updated", "Updated: 20 October 2026"))
-		.Add(new BStringView("platform", "A native Deskbar application for Haiku"))
+		.Add(new BStringView("platform", "Deskbar Application"))
 		.AddStrut(8.0f)
-		.Add(Heading("thanks heading", "Special Thanks"))
-		.Add(new BStringView("haiku thanks", "The Haiku and Tracker contributors"))
-		.Add(new BStringView("community thanks", "The Haiku community"))
+		//.Add(Heading("thanks heading", "Special Thanks"))
+		//.Add(new BStringView("thanks", "Thanks would go here"))
 		.AddGlue();
 
 	return view;
 }
 //---------------------------------------------------------------------------------------------------------------------------------//
+
 
 BView* CreateLicenceView() {
 	BView* view = new BView("Licence", B_WILL_DRAW);
@@ -121,20 +117,20 @@ BView* CreateLicenceView() {
 }
 //---------------------------------------------------------------------------------------------------------------------------------//
 
-IconView::IconView(BBitmap* icon)
-	:
-	BView("application icon", B_WILL_DRAW),
-	fIcon(icon) {
+
+IconView::IconView(BBitmap* icon) : BView("application icon", B_WILL_DRAW),	fIcon(icon) {
 	SetViewUIColor(B_PANEL_BACKGROUND_COLOR);
 	SetExplicitMinSize(BSize(96, 96));
 	SetExplicitMaxSize(BSize(96, 96));
 }
 //---------------------------------------------------------------------------------------------------------------------------------//
 
+
 IconView::~IconView() {
 	delete fIcon;
 }
 //---------------------------------------------------------------------------------------------------------------------------------//
+
 
 void IconView::Draw(BRect updateRect) {
 	(void)updateRect;
@@ -147,6 +143,7 @@ void IconView::Draw(BRect updateRect) {
 }
 //---------------------------------------------------------------------------------------------------------------------------------//
 
+
 LinkView::LinkView(const char* name, const char* label, const char* url)
 	:
 	BStringView(name, label),
@@ -158,6 +155,7 @@ LinkView::LinkView(const char* name, const char* label, const char* url)
 	SetFont(&font);
 }
 //---------------------------------------------------------------------------------------------------------------------------------//
+
 
 void LinkView::AttachedToWindow() {
 	BStringView::AttachedToWindow();
@@ -172,6 +170,7 @@ void LinkView::AttachedToWindow() {
 }
 //---------------------------------------------------------------------------------------------------------------------------------//
 
+
 void LinkView::MouseDown(BPoint where) {
 	(void)where;
 	const char* arguments[] = { fUrl.String() };
@@ -179,14 +178,11 @@ void LinkView::MouseDown(BPoint where) {
 }
 //---------------------------------------------------------------------------------------------------------------------------------//
 
+
 } // namespace
 
 
-AboutWindow::AboutWindow()
-	:
-	BWindow(BRect(0, 0, 600, 500), "About haichi", B_TITLED_WINDOW,
-		B_NOT_RESIZABLE | B_NOT_ZOOMABLE | B_AUTO_UPDATE_SIZE_LIMITS
-			| B_CLOSE_ON_ESCAPE) {
+AboutWindow::AboutWindow()	: BWindow(BRect(0, 0, 600, 500), "About haichi", B_TITLED_WINDOW, B_NOT_RESIZABLE | B_NOT_ZOOMABLE | B_AUTO_UPDATE_SIZE_LIMITS | B_CLOSE_ON_ESCAPE) {
 	BStringView* title = new BStringView("title", "haichi");
 	BFont titleFont(*be_bold_font);
 	titleFont.SetSize(be_plain_font->Size() * 2.0f);
@@ -202,8 +198,7 @@ AboutWindow::AboutWindow()
 	tabs->AddTab(CreateCreditsView());
 	tabs->AddTab(CreateLicenceView());
 
-	BButton* closeButton = new BButton("close", "Close",
-		new BMessage(B_QUIT_REQUESTED));
+	BButton* closeButton = new BButton("close", "Close", new BMessage(B_QUIT_REQUESTED));
 	closeButton->MakeDefault(true);
 
 	BLayoutBuilder::Group<>(this, B_VERTICAL, 10.0f)
@@ -230,5 +225,6 @@ AboutWindow::AboutWindow()
 	CenterOnScreen();
 }
 //---------------------------------------------------------------------------------------------------------------------------------//
+
 
 } // namespace Haichi
