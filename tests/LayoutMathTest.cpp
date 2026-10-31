@@ -42,6 +42,13 @@ int main() {
 	assert(column[2] == BPoint(20, 100));
 	assert(AlignPositions(std::vector<BPoint>(), true, 30).empty());
 
+	BPoint reference(500, 240);
+	assert(RelativePosition(reference, -1, 0, 96) == BPoint(404, 240));
+	assert(RelativePosition(reference, 1, 0, 96) == BPoint(596, 240));
+	assert(RelativePosition(reference, 0, -1, 96) == BPoint(500, 144));
+	assert(RelativePosition(reference, 0, 1, 96) == BPoint(500, 336));
+	assert(RelativePosition(reference, 0, 0, 96) == reference);
+
 	std::puts("haichi layout tests passed");
 	return 0;
 }

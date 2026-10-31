@@ -8,6 +8,9 @@
 #include <Button.h>
 #include <LayoutBuilder.h>
 #include <ListView.h>
+#include <MenuField.h>
+#include <MenuItem.h>
+#include <PopUpMenu.h>
 #include <ScrollView.h>
 #include <Screen.h>
 #include <Size.h>
@@ -25,16 +28,28 @@
 
 namespace Haichi {
 
-MainWindow::MainWindow(HaichiEngine* engine) :	BWindow(BRect(60, 60, 1160, 780), "haichi", B_TITLED_WINDOW, B_AUTO_UPDATE_SIZE_LIMITS),
+namespace {
+
+const char* const kSnapshotName = "snapshot";
+
+} // namespace
+
+MainWindow::MainWindow(HaichiEngine* engine) :	BWindow(BRect(60, 60, 1160, 680), "haichi", B_TITLED_WINDOW, B_AUTO_UPDATE_SIZE_LIMITS),
 												fEngine(engine), fIconList(new BListView("icons", B_MULTIPLE_SELECTION_LIST)),
 												fXControl(new BTextControl("x", "X:", "", NULL)),
 												fYControl(new BTextControl("y", "Y:", "", NULL)),
 												fSpacingControl(new BTextControl("spacing", "Spacing:", "96", NULL)),
+												fReferenceMenu(new BPopUpMenu("reference icons", true, true)),
+												fReferenceField(new BMenuField("reference", "Reference:", fReferenceMenu)),
 												fApplyButton(new BButton("apply", "Apply", new BMessage(kApplyPosition))),
 												fAlignRowButton(new BButton("align row", "Align row", new BMessage(kAlignRow))),
 												fAlignColumnButton(new BButton("align column", "Align column", new BMessage(kAlignColumn))),
+												fPlaceLeftButton(new BButton("place left", "Left", new BMessage(kPlaceLeft))),
+												fPlaceRightButton(new BButton("place right", "Right", new BMessage(kPlaceRight))),
+												fPlaceAboveButton(new BButton("place above", "Above", new BMessage(kPlaceAbove))),
+												fPlaceBelowButton(new BButton("place below", "Below", new BMessage(kPlaceBelow))),
 												fStatusView(new BStringView("status", "Ready")), fSelectionView(new BStringView("selection", "Selected icon: none")),
-												fPreview(new DesktopPreview()) {
+												fPreview(new DesktopPreview()), fReferenceIndex(-1) {
 
 	fIconList->SetSelectionMessage(new BMessage(kSelectionChanged));
 	fIconList->SetExplicitMinSize(BSize(220, 400));
@@ -46,6 +61,10 @@ MainWindow::MainWindow(HaichiEngine* engine) :	BWindow(BRect(60, 60, 1160, 780),
 	BView* previewPane = new BView("preview pane", B_WILL_DRAW);
 	previewPane->SetViewUIColor(B_PANEL_BACKGROUND_COLOR);
 	BButton* refreshButton = new BButton("refresh", "Refresh", new BMessage(kRefreshIcons));
+	BButton* saveSnapshotButton = new BButton("save snapshot", "Save Snapshot",
+		new BMessage(kSaveSnapshot));
+	BButton* restoreSnapshotButton = new BButton("restore snapshot",
+		"Restore Snapshot", new BMessage(kRestoreSnapshot));
 	BStringView* previewTitle = new BStringView("preview title", "Desktop Position Preview");
 	BStringView* iconTitle = new BStringView("icon title", "Desktop Icons");
 	BStringView* previewHelp = new BStringView("preview help",
@@ -67,6 +86,13 @@ MainWindow::MainWindow(HaichiEngine* engine) :	BWindow(BRect(60, 60, 1160, 780),
 			.Add(fSpacingControl)
 			.Add(fAlignRowButton)
 			.Add(fAlignColumnButton)
+		.End()
+		.AddGroup(B_HORIZONTAL, B_USE_DEFAULT_SPACING)
+			.Add(fReferenceField, 1.0f)
+			.Add(fPlaceLeftButton)
+			.Add(fPlaceRightButton)
+			.Add(fPlaceAboveButton)
+			.Add(fPlaceBelowButton)
 		.End();
 	BSplitView* splitView = new BSplitView(B_HORIZONTAL,
 		B_USE_DEFAULT_SPACING);
@@ -79,11 +105,19 @@ MainWindow::MainWindow(HaichiEngine* engine) :	BWindow(BRect(60, 60, 1160, 780),
 		.Add(splitView, 1.0f)
 		.AddGroup(B_HORIZONTAL, B_USE_DEFAULT_SPACING)
 			.Add(fStatusView, 1.0f)
+			.Add(saveSnapshotButton)
+			.Add(restoreSnapshotButton)
 			.Add(refreshButton)
 		.End();
 
+	fPlaceLeftButton->SetToolTip("Set coordinates to the left of the reference icon");
+	fPlaceRightButton->SetToolTip("Set coordinates to the right of the reference icon");
+	fPlaceAboveButton->SetToolTip("Set coordinates above the reference icon");
+	fPlaceBelowButton->SetToolTip("Set coordinates below the reference icon");
+	fReferenceMenu->SetTargetForItems(this);
 	SetControlsEnabled(false);
 	SetAlignmentControlsEnabled(false);
+	UpdateReferenceControls();
 	PostMessage(kRefreshIcons);
 }
 //---------------------------------------------------------------------------------------------------------------------------------//
@@ -117,6 +151,34 @@ void MainWindow::MessageReceived(BMessage* message) {
 
 		case kAlignColumn:
 			AlignSelected(false);
+			break;
+
+		case kReferenceIconChanged:
+			SetReferenceIcon(message);
+			break;
+
+		case kPlaceLeft:
+			PlaceRelative(-1, 0);
+			break;
+
+		case kPlaceRight:
+			PlaceRelative(1, 0);
+			break;
+
+		case kPlaceAbove:
+			PlaceRelative(0, -1);
+			break;
+
+		case kPlaceBelow:
+			PlaceRelative(0, 1);
+			break;
+
+		case kSaveSnapshot:
+			SaveSnapshot();
+			break;
+
+		case kRestoreSnapshot:
+			RestoreSnapshot();
 			break;
 
 		default:

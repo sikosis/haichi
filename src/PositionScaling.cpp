@@ -60,6 +60,14 @@ std::vector<BPoint> AlignPositions(const std::vector<BPoint>& positions,
 }
 //---------------------------------------------------------------------------------------------------------------------------------//
 
+BPoint RelativePosition(BPoint reference, int32 horizontalDirection,
+	int32 verticalDirection, float spacing) {
+	reference.x += horizontalDirection * spacing;
+	reference.y += verticalDirection * spacing;
+	return reference;
+}
+//---------------------------------------------------------------------------------------------------------------------------------//
+
 BPoint ScalePosition(BPoint position, int32 savedWidth, int32 savedHeight,
 	int32 currentWidth, int32 currentHeight) {
 	if (savedWidth <= 0 || savedHeight <= 0 || currentWidth <= 0

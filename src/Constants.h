@@ -17,6 +17,13 @@ namespace Haichi {
     const uint32 kPreviewIconSelected = 'pris';
     const uint32 kAlignRow = 'alrw';
     const uint32 kAlignColumn = 'alcl';
+    const uint32 kReferenceIconChanged = 'rfch';
+    const uint32 kPlaceLeft = 'pllf';
+    const uint32 kPlaceRight = 'plrt';
+    const uint32 kPlaceAbove = 'plab';
+    const uint32 kPlaceBelow = 'plbl';
+    const uint32 kSaveSnapshot = 'svsn';
+    const uint32 kRestoreSnapshot = 'rssn';
 
 } // namespace Haichi
 
